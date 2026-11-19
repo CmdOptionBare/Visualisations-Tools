@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Visualisations-Tools</title>
+  <link rel="stylesheet" href="./shared/hub.css">
+</head>
+<body>
+  <div class="wrap">
+    <p class="brand">Visualisations-Tools</p>
+    <h1>Static visualization hub</h1>
+    <p class="lead">Each entry is a folder with its own <code>index.html</code>, served at <code>/&lt;slug&gt;/</code> on Vercel. Local data lives beside the page (same-origin).</p>
+    <ul class="viz-list">
+      <li>
+        <a href="./examples/hello/">
+          <strong>Hello (JSON demo)</strong>
+          <span>Tiny example that loads <code>./data/sample.json</code>.</span>
+          <code>/examples/hello/</code>
+        </a>
+      </li>
+      <li>
+        <a href="./first-principles-graph/">
+          <strong>First Principles · Erkenntnisbaum</strong>
+          <span>Interactive multi-root knowledge DAG (self-contained).</span>
+          <code>/first-principles-graph/</code>
+        </a>
+      </li>
+      <li>
+        <a href="./kognitiv-graph/">
+          <strong>Kognitiv Graph · Live-Diagnose</strong>
+          <span>Cognitive graph visualization (D3 via CDN).</span>
+          <code>/kognitiv-graph/</code>
+        </a>
+      </li>
+    </ul>
+    <p class="note"><strong>c4-studio-diagramm/</strong> stays in the repo as a local Python + Structurizr workbench. It needs its own server (<code>bash start.sh</code>) and is not a static Vercel subpage.</p>
+  </div>
+</body>
+</html>
