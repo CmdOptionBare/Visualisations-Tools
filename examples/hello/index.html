@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hello · Visualisations-Tools</title>
+  <link rel="stylesheet" href="../../shared/hub.css">
+  <style>
+    .demo {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.1rem 1.2rem;
+    }
+    .demo h2 { margin: 0 0 0.4rem; font-size: 1.2rem; }
+    .demo p { margin: 0 0 1rem; color: var(--muted); }
+    .bars { display: grid; gap: 0.55rem; }
+    .bar-row { display: grid; grid-template-columns: 2rem 1fr 2rem; gap: 0.5rem; align-items: center; font-size: 0.9rem; }
+    .bar-track { height: 10px; background: #243040; border-radius: 999px; overflow: hidden; }
+    .bar-fill { height: 100%; background: var(--accent); border-radius: inherit; width: 0; transition: width 0.5s ease; }
+    .err { color: #f0a0a0; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="back" href="../../">← Hub</a>
+    <p class="brand">examples / hello</p>
+    <h1>Local JSON demo</h1>
+    <p class="lead">This page fetches <code>./data/sample.json</code> with a relative URL so it works at <code>/examples/hello/</code> without CORS issues.</p>
+    <div class="demo" id="out" aria-live="polite">Loading…</div>
+  </div>
+  <script type="module">
+    import { loadJson } from "../../shared/load-json.js";
+
+    const out = document.getElementById("out");
+    try {
+      const data = await loadJson("./data/sample.json");
+      const max = Math.max(...data.points.map((p) => p.value), 1);
+      out.innerHTML = `
+        <h2>${data.title}</h2>
+        <p>${data.message}</p>
+        <div class="bars">
+          ${data.points.map((p) => `
+            <div class="bar-row">
+              <span>${p.label}</span>
+              <div class="bar-track"><div class="bar-fill" style="width:${(p.value / max) * 100}%"></div></div>
+              <span>${p.value}</span>
+            </div>
+          `).join("")}
+        </div>
+      `;
+    } catch (err) {
+      out.innerHTML = `<p class="err">${err.message}</p>`;
+    }
+  </script>
+</body>
+</html>
