@@ -11,6 +11,9 @@ Static multi-visualization site for **Vercel**. Each visualization is a folder w
 ├── shared/                    # Reusable CSS/JS (relative: ../shared/…)
 │   ├── hub.css
 │   └── load-json.js
+├── examples/blank/            # Starter template: local JSON + loadJson
+│   ├── index.html
+│   └── data/sample.json
 ├── examples/hello/            # Demo: fetches local JSON
 │   ├── index.html
 │   └── data/sample.json
@@ -26,6 +29,7 @@ Static multi-visualization site for **Vercel**. Each visualization is a folder w
 | Folder | URL on Vercel |
 |--------|----------------|
 | `index.html` | `https://<project>.vercel.app/` |
+| `examples/blank/` | `https://<project>.vercel.app/examples/blank/` |
 | `examples/hello/` | `https://<project>.vercel.app/examples/hello/` |
 | `first-principles-graph/` | `https://<project>.vercel.app/first-principles-graph/` |
 | `kognitiv-graph/` | `https://<project>.vercel.app/kognitiv-graph/` |
