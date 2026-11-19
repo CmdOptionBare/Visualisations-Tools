@@ -1,0 +1,95 @@
+<svg width="1313pt" height="390pt"
+ viewBox="0.00 0.00 1312.60 389.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(28.8 360.8)">
+<title>G</title>
+<!-- 1 -->
+<g id="node1" class="node">
+<title>1</title>
+<g id="a_node1"><a xlink:href="#element=1" xlink:title="Gibt Aufgaben frei und prüft Ergebnisse.">
+<path fill="#f1e5cc" stroke="#c8d6d2" stroke-width="1.2" d="M260,-200C260,-200 12,-200 12,-200 6,-200 0,-194 0,-188 0,-188 0,-144 0,-144 0,-138 6,-132 12,-132 12,-132 260,-132 260,-132 266,-132 272,-138 272,-144 272,-144 272,-188 272,-188 272,-194 266,-200 260,-200"/>
+<text text-anchor="middle" x="136" y="-176.6" font-family="Arial" font-size="13.00">Entwickler:in</text>
+<text text-anchor="middle" x="136" y="-162.6" font-family="Arial" font-size="13.00">[person]</text>
+<text text-anchor="middle" x="136" y="-148.6" font-family="Arial" font-size="13.00">Gibt Aufgaben frei und prüft Ergebnisse.</text>
+</a>
+</g>
+</g>
+<!-- 2 -->
+<g id="node2" class="node">
+<title>2</title>
+<g id="a_node2"><a xlink:href="#element=2" xlink:title="Ein Client steuert Agenten. Kooperation braucht eine Vermittlung.">
+<path fill="#e0eee8" stroke="#c8d6d2" stroke-width="1.2" d="M730,-207C730,-207 485,-207 485,-207 479,-207 473,-201 473,-195 473,-195 473,-137 473,-137 473,-131 479,-125 485,-125 485,-125 730,-125 730,-125 736,-125 742,-131 742,-137 742,-137 742,-195 742,-195 742,-201 736,-207 730,-207"/>
+<text text-anchor="middle" x="607.5" y="-183.6" font-family="Arial" font-size="13.00">Agenten&#45;Arbeitsplatz</text>
+<text text-anchor="middle" x="607.5" y="-169.6" font-family="Arial" font-size="13.00">[softwareSystem]</text>
+<text text-anchor="middle" x="607.5" y="-155.6" font-family="Arial" font-size="13.00">Ein Client steuert Agenten. Kooperation</text>
+<text text-anchor="middle" x="607.5" y="-141.6" font-family="Arial" font-size="13.00">braucht eine Vermittlung.</text>
+</a>
+</g>
+</g>
+<!-- 1&#45;&gt;2 -->
+<g id="edge1" class="edge">
+<title>1&#45;&gt;2</title>
+<path fill="none" stroke="#9aaea7" d="M272.17,-166C332.82,-166 404.35,-166 465.65,-166"/>
+<polygon fill="#9aaea7" stroke="#9aaea7" points="465.69,-168.45 472.69,-166 465.69,-163.55 465.69,-168.45"/>
+<text text-anchor="middle" x="372.5" y="-180" font-family="Arial" font-size="10.00" fill="#526961">Formuliert Auftrag, bestätigt</text>
+<text text-anchor="middle" x="372.5" y="-169" font-family="Arial" font-size="10.00" fill="#526961">Freigaben</text>
+</g>
+<!-- 11 -->
+<g id="node3" class="node">
+<title>11</title>
+<g id="a_node3"><a xlink:href="#element=11" xlink:title="LLM&#45;Inferenz über die vom Agenten gewählte API; ACP ist kein Modell&#45;API&#45;Protokoll.">
+<path fill="#e0eee8" stroke="#c8d6d2" stroke-width="1.2" d="M1243,-332C1243,-332 964,-332 964,-332 958,-332 952,-326 952,-320 952,-320 952,-262 952,-262 952,-256 958,-250 964,-250 964,-250 1243,-250 1243,-250 1249,-250 1255,-256 1255,-262 1255,-262 1255,-320 1255,-320 1255,-326 1249,-332 1243,-332"/>
+<text text-anchor="middle" x="1103.5" y="-308.6" font-family="Arial" font-size="13.00">Modellanbieter</text>
+<text text-anchor="middle" x="1103.5" y="-294.6" font-family="Arial" font-size="13.00">[softwareSystem]</text>
+<text text-anchor="middle" x="1103.5" y="-280.6" font-family="Arial" font-size="13.00">LLM&#45;Inferenz über die vom Agenten gewählte</text>
+<text text-anchor="middle" x="1103.5" y="-266.6" font-family="Arial" font-size="13.00">API; ACP ist kein Modell&#45;API&#45;Protokoll.</text>
+</a>
+</g>
+</g>
+<!-- 2&#45;&gt;11 -->
+<g id="edge2" class="edge">
+<title>2&#45;&gt;11</title>
+<path fill="none" stroke="#9aaea7" d="M742.18,-199.83C804.63,-215.63 879.41,-234.55 944.62,-251.05"/>
+<polygon fill="#9aaea7" stroke="#9aaea7" points="944.32,-253.5 951.71,-252.84 945.53,-248.75 944.32,-253.5"/>
+<text text-anchor="middle" x="847" y="-242" font-family="Arial" font-size="10.00" fill="#526961">Fragt Modell an</text>
+</g>
+<!-- 12 -->
+<g id="node4" class="node">
+<title>12</title>
+<g id="a_node4"><a xlink:href="#element=12" xlink:title="A2A&#45;Endpunkt oder Adapter nötig. ACP allein stellt diesen nicht bereit.">
+<path fill="#e0eee8" stroke="#c8d6d2" stroke-width="1.2" d="M1225.5,-207C1225.5,-207 981.5,-207 981.5,-207 975.5,-207 969.5,-201 969.5,-195 969.5,-195 969.5,-137 969.5,-137 969.5,-131 975.5,-125 981.5,-125 981.5,-125 1225.5,-125 1225.5,-125 1231.5,-125 1237.5,-131 1237.5,-137 1237.5,-137 1237.5,-195 1237.5,-195 1237.5,-201 1231.5,-207 1225.5,-207"/>
+<text text-anchor="middle" x="1103.5" y="-183.6" font-family="Arial" font-size="13.00">Entfernter Agent (optional)</text>
+<text text-anchor="middle" x="1103.5" y="-169.6" font-family="Arial" font-size="13.00">[softwareSystem]</text>
+<text text-anchor="middle" x="1103.5" y="-155.6" font-family="Arial" font-size="13.00">A2A&#45;Endpunkt oder Adapter nötig. ACP</text>
+<text text-anchor="middle" x="1103.5" y="-141.6" font-family="Arial" font-size="13.00">allein stellt diesen nicht bereit.</text>
+</a>
+</g>
+</g>
+<!-- 2&#45;&gt;12 -->
+<g id="edge4" class="edge">
+<title>2&#45;&gt;12</title>
+<path fill="none" stroke="#9aaea7" d="M742.18,-166C810.28,-166 893.05,-166 962.08,-166"/>
+<polygon fill="#9aaea7" stroke="#9aaea7" points="962.14,-168.45 969.14,-166 962.14,-163.55 962.14,-168.45"/>
+<text text-anchor="middle" x="847" y="-169" font-family="Arial" font-size="10.00" fill="#526961">Optional: delegiert Aufgabe</text>
+</g>
+<!-- 13 -->
+<g id="node5" class="node">
+<title>13</title>
+<g id="a_node5"><a xlink:href="#element=13" xlink:title="Quellcode und Dateien auf Mac, Linux oder Server. Zugriff nach Freigabe.">
+<path fill="#e0eee8" stroke="#c8d6d2" stroke-width="1.2" d="M1237,-82C1237,-82 970,-82 970,-82 964,-82 958,-76 958,-70 958,-70 958,-12 958,-12 958,-6 964,0 970,0 970,0 1237,0 1237,0 1243,0 1249,-6 1249,-12 1249,-12 1249,-70 1249,-70 1249,-76 1243,-82 1237,-82"/>
+<text text-anchor="middle" x="1103.5" y="-58.6" font-family="Arial" font-size="13.00">Lokaler Projektordner</text>
+<text text-anchor="middle" x="1103.5" y="-44.6" font-family="Arial" font-size="13.00">[softwareSystem]</text>
+<text text-anchor="middle" x="1103.5" y="-30.6" font-family="Arial" font-size="13.00">Quellcode und Dateien auf Mac, Linux oder</text>
+<text text-anchor="middle" x="1103.5" y="-16.6" font-family="Arial" font-size="13.00">Server. Zugriff nach Freigabe.</text>
+</a>
+</g>
+</g>
+<!-- 2&#45;&gt;13 -->
+<g id="edge3" class="edge">
+<title>2&#45;&gt;13</title>
+<path fill="none" stroke="#9aaea7" d="M742.18,-132.17C806.69,-115.85 884.36,-96.2 951.04,-79.32"/>
+<polygon fill="#9aaea7" stroke="#9aaea7" points="951.69,-81.69 957.88,-77.6 950.49,-76.94 951.69,-81.69"/>
+<text text-anchor="middle" x="847" y="-136" font-family="Arial" font-size="10.00" fill="#526961">Dateien lesen/schreiben nach</text>
+<text text-anchor="middle" x="847" y="-125" font-family="Arial" font-size="10.00" fill="#526961">Fähigkeiten und Freigabe</text>
+</g>
+</g>
+</svg>

@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>First Principles · Mehrwurzeliger Erkenntnisbaum</title>
+<style>
+:root{color-scheme:dark;--bg:#080e19;--panel:#101a2b;--border:#263449;--txt:#e8eff8;--muted:#91a4bd;--accent:#71e2ce;--btn:#1a2b43}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font:13px/1.42 system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--txt)}
+button,input,select{font:inherit}button{cursor:pointer;color:inherit;background:var(--btn);border:1px solid #34445d;border-radius:8px;padding:8px 10px}button:hover{background:#263b57}button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.shell{display:grid;grid-template-columns:225px minmax(350px,1fr)250px;grid-template-rows:auto minmax(610px,1fr);height:min(920px,94vh);min-height:670px;border:1px solid #243449;border-radius:15px;overflow:hidden;background:#0b1422}
+.top{grid-column:1/-1;display:flex;gap:12px;align-items:center;padding:12px 15px;border-bottom:1px solid var(--border);background:#111b2b}.mark{width:30px;height:30px;border:1px solid #4b7d7a;background:#193638;color:#7de6cc;border-radius:9px;display:grid;place-items:center;font-size:18px}.top h1{font-size:15px;letter-spacing:.01em;margin:0}.top p{font-size:11px;margin:1px 0 0;color:var(--muted)}.top .grow{flex:1}.chip{background:#1a2b3e;border:1px solid #2d4057;color:#aebfd5;border-radius:30px;font-size:11px;padding:5px 9px;white-space:nowrap}
+.side{background:#101a2a;overflow:auto;padding:15px 13px;scrollbar-color:#44516b transparent}.side.left{border-right:1px solid var(--border)}.side.right{border-left:1px solid var(--border)}h2{font-size:10px;letter-spacing:.12em;color:#90a5be;text-transform:uppercase;margin:0 0 10px}h3{font-size:12px;margin:15px 0 8px}.section{margin-bottom:19px;padding-bottom:16px;border-bottom:1px solid #263449}.section:last-child{border:0}.stack{display:grid;gap:8px}.seg{display:grid;grid-template-columns:1fr 1fr;gap:5px}.seg button.active{background:#18413d;border-color:#4cbaa7;color:#92f1df}.line{display:flex;justify-content:space-between;align-items:center;gap:7px;margin:10px 0 5px}.line label{color:#c3d0e1}.line strong{color:#9de4d8;font-size:11px;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:#73d9c5;cursor:pointer}.check{display:flex;gap:9px;align-items:center;margin:9px 0;color:#c9d5e6}.check input{accent-color:#73d9c5}.export{display:grid;grid-template-columns:1fr 1fr;gap:6px}.export button{font-size:12px}.sub{font-size:11px;color:var(--muted);line-height:1.48;margin:8px 0 0}.sub a{color:#85dfd0}
+.viewport{position:relative;min-width:0;overflow:hidden;background:radial-gradient(ellipse at 50% 38%,#13263d 0%,#0b1422 70%)}canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}canvas.dragging{cursor:grabbing}.overlay{position:absolute;top:13px;left:14px;pointer-events:none}.overlay .eyebrow{font-size:10px;letter-spacing:.17em;color:#8aa2bd}.overlay .big{font-size:18px;font-weight:650;letter-spacing:-.03em}.overlay .note{font-size:11px;color:#a2b2c7}.help{position:absolute;left:14px;bottom:12px;color:#8ea0b5;font-size:11px;pointer-events:none;background:#0a1524a8;padding:6px 8px;border-radius:7px}.bottom-chip{position:absolute;right:12px;bottom:13px;background:#122237df;border:1px solid #33465f;border-radius:8px;padding:6px 9px;font-size:11px;color:#b5c6d8;pointer-events:none}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:7px}.stat{background:#17253a;border:1px solid #2c3c54;border-radius:9px;padding:9px}.stat strong{display:block;font-size:18px;font-weight:650;color:#f1f7ff;font-variant-numeric:tabular-nums}.stat span{font-size:10px;color:#9badc2}.level-item{display:flex;align-items:center;gap:8px;padding:5px 2px;font-size:11px;color:#b7c9da}.level-color{width:9px;height:9px;border-radius:50%;flex:none}.level-item b{min-width:29px;color:#e0eaf4;font-weight:550}.level-item span{flex:1}.level-item em{font-style:normal;color:#8b9db3;font-variant-numeric:tabular-nums}.edge-item{display:grid;grid-template-columns:17px 17px 1fr auto;gap:5px;align-items:center;min-height:25px;font-size:11px}.edge-item input{accent-color:#77e1d0;cursor:pointer}.edge-line{border-top:3px solid var(--c);height:0;position:relative;top:-1px}.edge-item span{color:#cad7e6;white-space:nowrap}.edge-item small{color:#8ba1b9;font-size:12px}.legend{display:grid;gap:3px}.detail{background:#15263a;border:1px solid #31516b;border-radius:10px;padding:10px;margin-bottom:14px;line-height:1.6}.detail strong{font-size:13px}.detail .sub{margin-top:4px}.detail .label{color:#8cabc0;font-size:11px}.detail .val{color:#e4f2f6}.small{font-size:10px;color:#7f94ad}.tip{padding:10px;background:#13233a;border-radius:8px;font-size:11px;line-height:1.55;color:#aac0d3}
+.impact-stat{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:5px 0;border-bottom:1px solid #23354b;font-size:11px}
+.impact-stat strong{font-variant-numeric:tabular-nums;color:#edbcb5}
+.impact-stat:last-child{border-bottom:0}
+.dimensions{display:grid;gap:6px;margin-top:9px}.dimension{width:100%;text-align:left;display:flex;align-items:center;gap:8px;padding:8px;background:#142d38;border:1px solid #2b5361}.dimension b{display:block;font-size:11px}.dimension span{display:block;color:#99b7bc;font-size:10px}.dimension i{display:block;width:5px;height:29px;border-radius:3px;background:var(--dc);flex-shrink:0}
+.dimension.active{border-color:#7fdccb;background:#1a3e43}
+.editor{display:grid;gap:6px;margin-top:11px;padding:10px 8px;border-radius:8px;background:#0c1c2e;border:1px solid #2c4762}.editor label{font-size:11px;color:#afc4d8}.editor input[type=number],.editor select{max-width:100%;background:#182a42;color:#eff8ff;border:1px solid #34516d;border-radius:6px;padding:6px}.editor input[type=number]{width:85px}.editor .control-pair{display:flex;align-items:center;gap:7px}.editor .control-pair input[type=range]{flex:1;min-width:0}.editor small{font-size:10px;color:#94b0c8}.delta-neg{color:#ff959b}.delta-pos{color:#8af0bf}.impact-tag{display:inline-flex;border:1px solid #745655;background:#4b262f;color:#ffc2b8;border-radius:6px;padding:2px 5px;font-size:10px}
+.colorbar{height:5px;background:linear-gradient(to right,#76e5c5,#6ccae2,#a9a5f5,#ef9cda,#f3bc89);border-radius:5px;margin:8px 0}
+@media(max-width:1060px){.shell{grid-template-columns:184px minmax(300px,1fr)204px}.side{padding:12px 9px}}
+@media(max-width:760px){.shell{display:flex;flex-direction:column;height:auto;min-height:0}.top{flex-wrap:wrap}.side.left,.side.right{border:0;border-bottom:1px solid var(--border)}.side.left{order:2}.viewport{height:520px;order:1}.side.right{order:3}.top{order:0}.side .section{display:inline-block;vertical-align:top;width:min(270px,100%);margin:0 13px 12px 0}.side{overflow:visible}}
+</style>
+</head>
+<body>
+<div class="shell" id="app">
+ <header class="top"><div class="mark">◇</div><div><h1>FIRST PRINCIPLES <span style="color:#83e4d3">/</span> ERKENNTNISBAUM</h1><p>Mehrere Wurzeln · vertikales Wachstum · räumliche Querschnitte</p></div><div class="grow"></div><span class="chip">DAG · mehrwurzeliger Schichtkörper</span><button id="reset" title="Ansicht zurücksetzen">Ansicht zurücksetzen</button></header>
+ <aside class="side left">
+  <div class="section"><h2>Projektion</h2><div class="seg"><button id="mode2d" class="active">2D · Schichten</button><button id="mode3d">3D · Raum</button></div><p class="sub">3D: Axiomebene als Wurzelplatte. Darüber verzweigte Wachstumspfade, Querverbindungen und räumliche Querschnittsebenen.</p></div>
+  <div class="section"><h2>Darstellung</h2><div class="line"><label for="density">Kantendichte</label><strong id="densityValue">75 %</strong></div><input id="density" type="range" min="5" max="100" step="5" value="75"><div class="line"><label for="size">Knotengröße</label><strong id="sizeValue">100 %</strong></div><input id="size" type="range" min="60" max="170" step="10" value="100"><label class="check"><input id="symbols" type="checkbox" checked> Kantensymbole (Stichprobe)</label><label class="check"><input id="confidence" type="checkbox" checked> Konfidenzverlauf anzeigen</label><label class="check"><input id="onlySelected" type="checkbox"> Nur Nachbarschaft zeigen</label></div>
+  <div class="section"><h2>Wahrheits-Kaskade</h2><label class="check"><input id="showImpact" type="checkbox" checked> Änderungen im Netz hervorheben</label><button id="restoreValues" style="width:100%;margin-top:5px">Modellwerte zurücksetzen</button><p class="sub">Knoten anklicken und Konfidenz ändern. Nachfolgende Knoten werden neu berechnet; direkt gesetzte Werte bleiben fixiert.</p></div>
+  <div class="section"><h2>Export</h2><div class="export"><button id="svgExport">SVG · Vektor</button><button id="pngExport">PNG · Bild</button><button id="jpgExport">JPEG · Bild</button><button id="dataExport">JSON · Daten</button></div><p class="sub">Exportiert die aktuelle Projektion und Filterung.</p></div>
+  <div class="section"><h2>Logik der Darstellung</h2><div class="tip">Kanten zeigen stets von früheren zu späteren Schlüssen. Räumlich können sie seitwärts verlaufen. Daher bleibt der Graph azyklisch.</div><p class="sub">Konfidenzen und Wirkstärken sind illustrative Szenariowerte, keine kalibrierten Wahrheitswahrscheinlichkeiten. Die Ausbreitung modelliert Sensitivität, nicht zwingende Logik.</p></div>
+ </aside>
+ <main class="viewport" id="viewport"><canvas id="graph" aria-label="Interaktiver First-Principles-Graph mit zehn Ebenen und einhundert Knoten"></canvas><div class="overlay"><div class="eyebrow">BOTTOM-UP · MEHRERE WURZELN · L0 → L9</div><div class="big">Wissen als mehrwurzeliger Erkenntnisbaum</div><div class="note" id="status">100 Knoten · 10 Ebenen</div></div><div class="help" id="controlsHelp">Mausrad: Zoom · Ziehen: Verschieben · Rechtsklick+Ziehen: Pan · Klick: Inspektion</div><div class="bottom-chip" id="cameraLabel">XZ-Projektion · Z = Erkenntnisebene</div></main>
+ <aside class="side right">
+  <div class="section"><h2>Netzwerk</h2><div class="stats"><div class="stat"><strong id="nodesCount">100</strong><span>Knoten</span></div><div class="stat"><strong id="edgesCount">0</strong><span>Kanten sichtbar</span></div><div class="stat"><strong>10</strong><span>Ebenen</span></div><div class="stat"><strong>20</strong><span>Kantentypen</span></div></div><div class="colorbar"></div><div class="small">Axiomebene → verzweigte Erkenntnisebenen</div></div>
+  <div class="section"><h2>Selektion</h2><div id="inspector" class="detail"><strong>Ein Element auswählen</strong><p class="sub">Knoten oder Kante im Graph anklicken, um Eigenschaften und Verknüpfungen zu untersuchen.</p></div></div>
+  <div class="section"><h2>Abhängigkeits-Kaskade</h2><div class="impact-stat"><span>Manuell geänderte Knoten</span><strong id="pinnedCount">0</strong></div><div class="impact-stat"><span>Veränderte Folgewerte</span><strong id="impactedCount">0</strong></div><div class="impact-stat"><span>Strukturell zu prüfen</span><strong id="reviewCount">0</strong></div><div class="impact-stat"><span>Maximale Abweichung</span><strong id="maxDelta">0,0 PP</strong></div><p class="sub">Rot: Konfidenzverlust · Grün: Zuwachs. Orange umrandet: modellweit abhängige Aussagen prüfen.</p></div>
+  <div class="section"><h2>Axiome als Modell-Dimensionen</h2><p class="sub">Die drei Grundannahmen begrenzen den konzeptuellen Raum. Klick wählt ein Axiom.</p><div id="dimensions" class="dimensions"></div><p class="sub">Die Dimensionen sind keine mathematisch bewiesenen orthogonalen Achsen.</p></div>
+  <div class="section"><h2>10 Erkenntnisebenen</h2><div id="levels"></div></div>
+  <div class="section"><h2>20 semantische Kantentypen</h2><p class="sub" style="margin-bottom:9px">Filter einzeln ein- und ausschalten.</p><div class="legend" id="legend"></div></div>
+ </aside>
+</div>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id), clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const LEVELS=[
+ {name:'Axiome',count:3,color:'#78e6c5',shape:'hex'},
+ {name:'Grundannahmen',count:4,color:'#62dbc9',shape:'hex'},
+ {name:'Definitionen',count:5,color:'#5ccccd',shape:'diamond'},
+ {name:'Prämissen',count:7,color:'#69c1e6',shape:'diamond'},
+ {name:'Erste Schlüsse',count:8,color:'#86aff0',shape:'roundrect'},
+ {name:'Ableitungen',count:10,color:'#a7a1f5',shape:'roundrect'},
+ {name:'Modelle',count:12,color:'#c3a2f1',shape:'circle'},
+ {name:'Hypothesen',count:14,color:'#dc9ee5',shape:'circle'},
+ {name:'Theorien',count:17,color:'#ec9fcd',shape:'circle'},
+ {name:'Komplexe Aussagen',count:20,color:'#f1bc8c',shape:'circle'}
+];
+const NODE_ROLES=[
+ ['axiom','Axiom','hex'],['annahme','Grundannahme','hex'],['definition','Definition','diamond'],
+ ['praemisse','Prämisse','diamond'],['schluss','Schluss','roundrect'],['ableitung','Ableitung','roundrect'],
+ ['modell','Modell','circle'],['hypothese','Hypothese','circle'],['theorie','Theorem / Theorie','roundrect'],
+ ['aussage','Aussage','circle'],['beobachtung','Empirische Beobachtung','diamond'],['test','Empirisch geprüft','hex']
+].map(([id,name,shape])=>({id,name,shape}));
+const LEVEL_ROLES=['axiom','annahme','definition','praemisse','schluss','ableitung','modell','hypothese','theorie','aussage'];
+const ROLE_BY_ID=new Map(NODE_ROLES.map(r=>[r.id,r]));
+// Interpretation der Relation für die DEMO-Kaskade, nicht ihre universelle logische Bedeutung.
+// notwendig: strukturelle Voraussetzung; stuetzend: evidenzbasierter Einfluss;
+// gegenläufig: adverser Einfluss; neutral: keine numerische Übertragung.
+const RELATION_BEHAVIOR={
+ deduktion:['notwendig',1],abhaengigkeit:['notwendig',1],bedingung:['notwendig',1],aggregation:['notwendig',.85],
+ implikation:['stuetzend',.75],stuetzung:['stuetzend',.7],evidenz:['stuetzend',.9],induktion:['stuetzend',.7],abduktion:['stuetzend',.58],hypothese:['stuetzend',.5],spezialisierung:['stuetzend',.7],generalisierung:['stuetzend',.53],einschraenkung:['stuetzend',.35],
+ konflikt:['gegenlaeufig',.6],unsicherheit:['gegenlaeufig',.25],
+ aequivalenz:['neutral',0],korrelation:['neutral',0],analogie:['neutral',0],definition:['neutral',0],kontext:['neutral',0]
+};
+const EDGE_TYPES=[
+ ['implikation','Implikation','⇒','#51ddbe',[], 'triangle',.98],
+ ['deduktion','Deduktion','⊢','#5be1ed',[], 'triangle',.99],
+ ['aequivalenz','Äquivalenz','⇔','#84b4ff',[6,3],'double',.96],
+ ['stuetzung','Stützung','+','#a0dd79',[4,3],'triangle',.93],
+ ['abhaengigkeit','Abhängigkeit','◇','#ffcf75',[2,4],'diamond',.93],
+ ['korrelation','Korrelation','≈','#ecaf85',[8,3],'dot',.78],
+ ['hypothese','Hypothese','?','#baadf7',[2,4],'triangle',.81],
+ ['analogie','Analogie','∼','#cf89fa',[6,4],'chevron',.80],
+ ['induktion','Induktion','↑','#80d5a8',[1,4],'triangle',.85],
+ ['abduktion','Abduktion','↝','#ff96b3',[5,3,1,3],'chevron',.82],
+ ['definition','Definition','≜','#a5ecf0',[], 'bar',.99],
+ ['aggregation','Aggregation','Σ','#b4b0fa',[4,2],'diamond',.90],
+ ['spezialisierung','Spezialisierung','⊂','#81baf7',[3,2],'triangle',.96],
+ ['generalisierung','Generalisierung','⊃','#99d8e9',[7,2],'triangle',.88],
+ ['kontext','Kontext','@','#e4c8a2',[2,3],'dot',.86],
+ ['bedingung','Bedingung','∧','#f0a2a2',[2,2],'bar',.93],
+ ['konflikt','Widerspruch','⚡','#fb778b',[6,2,2,2],'double',.72],
+ ['einschraenkung','Einschränkung','−','#c1a7da',[3,5],'bar',.91],
+ ['evidenz','Evidenz','⊕','#8de4a3',[], 'dot',.94],
+ ['unsicherheit','Unsicherheit','±','#efbbd7',[1,5],'chevron',.75]
+].map(([id,name,symbol,color,dash,arrow,weight])=>({id,name,symbol,color,dash,arrow,weight}));
+class RNG{constructor(seed){this.s=seed>>>0}next(){this.s=(Math.imul(1664525,this.s)+1013904223)>>>0;return this.s/4294967296}pick(a){return a[Math.floor(this.next()*a.length)]}}
+class GraphFactory{
+ static create(seed=4317){const r=new RNG(seed),nodes=[],edges=[],perLevel=[];let index=0;
+  LEVELS.forEach((level,L)=>{const arr=[];for(let i=0;i<level.count;i++){
+   const w=(i+1)/(level.count+1)-.5;
+   const x=w*880+(r.next()-.5)*(L<4?20:15);
+   const y=(r.next()-.5)*(45+L*31);
+   const z=(L-4.5)*92;
+   const role=(L>=6 && i%7===0)?'test':(L>=6&&i%5===0)?'beobachtung':LEVEL_ROLES[L];
+   const n={id:'N'+String(++index).padStart(3,'0'),L,i,x,y,z,r:25-L*1.8,role,shape:ROLE_BY_ID.get(role).shape,color:level.color,confidence:L===0?.968+r.next()*.029:0,overrideConfidence:null,parents:[],children:[]};
+   nodes.push(n);arr.push(n);
+  }perLevel.push(arr)});
+  perLevel[0].forEach(n=>n.branchRoot=n.id);
+  let seq=0;
+  perLevel.forEach((arr,L)=>{if(!L)return;const prev=perLevel[L-1],branchLoad=new Map();arr.forEach((to,i)=>{
+    const pool=nodes.filter(n=>n.L<L||(n.L===L&&n.i<i));
+    const number=Math.min(pool.length,2+Math.floor(L*.7)+Math.floor(r.next()*3));
+    const used=new Set();const branches=[...new Set(prev.map(n=>n.branchRoot))];const targetBranch=branches[i%branches.length];const candidates=prev.filter(n=>n.branchRoot===targetBranch);const minLoad=Math.min(...candidates.map(n=>branchLoad.get(n.id)||0));const balanced=candidates.filter(n=>(branchLoad.get(n.id)||0)===minLoad);const immediate=r.pick(balanced);branchLoad.set(immediate.id,(branchLoad.get(immediate.id)||0)+1);to.layoutParent=immediate;to.branchRoot=immediate.branchRoot;used.add(immediate.id);
+    while(used.size<number){const candidates=pool.filter(n=>!used.has(n.id));if(!candidates.length)break;
+      const weights=candidates.map(n=>1/(1+.7*(L-n.L))**1.3), total=weights.reduce((a,b)=>a+b,0);let t=r.next()*total,j=0;while(j<weights.length-1&&t>weights[j]){t-=weights[j];j++}used.add(candidates[j].id);
+    }
+    const sources=[...used].map(id=>nodes.find(n=>n.id===id));
+    sources.forEach(from=>{const type=EDGE_TYPES[(seq*7+Math.floor(r.next()*20))%20];const edge={id:'E'+String(++seq).padStart(3,'0'),from,to,type,primary:from===to.layoutParent,confidence:clamp(type.weight-(r.next()*.09)+.03,.6,.995),
+     strength:RELATION_BEHAVIOR[type.id][1]};edges.push(edge);from.children.push(edge);to.parents.push(edge)});
+    // Illustrativer Abschlagsparameter; keine mathematische Schlusswahrscheinlichkeit.
+    const mean=sources.reduce((s,n)=>s+n.confidence,0)/sources.length;
+    to.confidence=clamp(mean*(.975-L*.008)-.009*Math.log2(1+sources.length),.15,.995);
+   })});nodes.forEach(n=>{n.baseConfidence=n.confidence;});return {nodes,edges,perLevel};
+ }
+}
+const graph=GraphFactory.create();
+function assignTreeVolumeLayout(g){
+ const zStep=118, roots=g.perLevel[0], childOrdinal=new Map();
+ // Alle Axiome liegen gemeinsam auf einer horizontalen Wurzelebene.
+ roots.forEach((n,i)=>{
+  const a=-Math.PI/2+i*(Math.PI*2/roots.length);
+  n.x3d=Math.cos(a)*190; n.y3d=Math.sin(a)*190; n.z3d=(n.L-4.5)*zStep;
+  n.branchRoot=n.id; n.layoutAngle=a;
+ });
+ // Jeder weitere Knoten wächst aus einem primären Elternknoten.
+ // Zusätzliche Elternkanten bilden Querverbindungen zwischen den Zweigen.
+ g.perLevel.slice(1).forEach((level,idx)=>{
+  const L=idx+1;
+  level.forEach(n=>{
+   const parent=n.layoutParent || (n.parents[0]&&n.parents[0].from);
+   const ordinal=childOrdinal.get(parent.id)||0;
+   childOrdinal.set(parent.id,ordinal+1);
+   const seed=(parseInt(n.id.slice(1),10)*2.3999632297)+(L*.73)+(ordinal*1.6180339887);
+   const angle=seed+(parent.L%2)*.37;
+   const otherParents=n.parents.map(e=>e.from).filter(p=>Number.isFinite(p.x3d));
+   const meanX=otherParents.length?otherParents.reduce((s,p)=>s+p.x3d,0)/otherParents.length:parent.x3d;
+   const meanY=otherParents.length?otherParents.reduce((s,p)=>s+p.y3d,0)/otherParents.length:parent.y3d;
+   const anchorX=parent.x3d*.88+meanX*.12;
+   const anchorY=parent.y3d*.88+meanY*.12;
+   const branchStep=27+Math.min(L,8)*2.2+(ordinal%3)*5;
+   n.x3d=anchorX+Math.cos(angle)*branchStep;
+   n.y3d=anchorY+Math.sin(angle)*branchStep;
+   n.z3d=(n.L-4.5)*zStep;
+   n.branchRoot=parent.branchRoot;
+   n.layoutAngle=angle;
+  });
+ });
+ g.layerEnvelopes=g.perLevel.map((nodes,L)=>{
+  const cx=nodes.reduce((s,n)=>s+n.x3d,0)/nodes.length;
+  const cy=nodes.reduce((s,n)=>s+n.y3d,0)/nodes.length;
+  const rx=Math.max(92,...nodes.map(n=>Math.abs(n.x3d-cx)))+42;
+  const ry=Math.max(92,...nodes.map(n=>Math.abs(n.y3d-cy)))+42;
+  return {L,cx,cy,rx,ry,z:nodes[0].z3d,color:LEVELS[L].color};
+ });
+}
+assignTreeVolumeLayout(graph);
+const state={mode:'2d',zoom:1,panX:0,panY:0,yaw:-.78,pitch:.66,distance:1880,density:75,nodeSize:1,showSymbols:true,showConfidence:true,showImpact:true,onlySelected:false,review:new Set(),selected:null,hovered:null,types:new Set(EDGE_TYPES.map(t=>t.id))};
+const viewport=$('viewport'),canvas=$('graph'),ctx=canvas.getContext('2d');let W=800,H=700,dpr=1,projected=new Map(),shownEdges=[],drag=null,wasDragged=false,drawQueued=false;
+const byId=new Map(graph.nodes.map(n=>[n.id,n]));
+// DAG-Reihenfolge: Quellen liegen stets in vorherigen Ebenen oder sind ältere Knoten derselben Ebene.
+const topologicalNodes=graph.nodes.slice();
+function edgeBehavior(e){return RELATION_BEHAVIOR[e.type.id][0]}
+function edgeFactor(e){
+ const mode=edgeBehavior(e),strength=e.strength,delta=e.from.confidence-e.from.baseConfidence;
+ if(mode==='neutral'||strength===0||Math.abs(delta)<1e-10)return 1;
+ if(mode==='notwendig')return clamp(1+strength*delta/Math.max(.001,e.from.baseConfidence),0,1.8);
+ if(mode==='gegenlaeufig')return clamp(1-delta*strength*.55,.35,1.7);
+ return clamp(1+delta*strength*.7,.25,1.7);
+}
+function descendants(roots,onlyPropagating){
+ const seen=new Set(),todo=[...roots];while(todo.length){const node=todo.shift();for(const edge of node.children){
+  if(onlyPropagating&&(edgeBehavior(edge)==='neutral'||edge.strength===0))continue;
+  if(!seen.has(edge.to)){seen.add(edge.to);todo.push(edge.to)}
+ }}return seen;
+}
+function recompute(){
+ for(const n of topologicalNodes){if(n.overrideConfidence!==null){n.confidence=n.overrideConfidence;continue}
+  let factor=1;for(const e of n.parents)factor*=edgeFactor(e);
+  n.confidence=clamp(n.baseConfidence*factor,0,1);
+ }
+ const roots=graph.nodes.filter(n=>n.overrideConfidence!==null);
+ state.review=descendants(roots,false);
+ const affected=graph.nodes.filter(n=>n.overrideConfidence===null&&Math.abs(n.confidence-n.baseConfidence)>.0005);
+ $('pinnedCount').textContent=roots.length;
+ $('impactedCount').textContent=affected.length;
+ $('reviewCount').textContent=state.review.size;
+ const maxDelta=Math.max(0,...graph.nodes.map(n=>Math.abs(n.confidence-n.baseConfidence)*100));
+ $('maxDelta').textContent=maxDelta.toFixed(1).replace('.',',')+' PP';
+ updateLevelList();updateDimensions();scheduleDraw();
+}
+function updateLevelList(){graph.perLevel.forEach((a,i)=>{
+ const target=$('level-val-'+i);if(target)target.textContent=a.length+' · ~'+Math.round(a.reduce((s,n)=>s+n.confidence,0)/a.length*100)+'%';
+ })}
+function updateDimensions(){const host=$('dimensions');if(!host)return;
+ host.querySelectorAll('button').forEach((el,i)=>{const a=graph.perLevel[0][i];if(!a)return;
+  const reach=descendants([a],false).size;
+  el.classList.toggle('active',state.selected===a);
+  el.querySelector('.dimension-score').textContent=(a.confidence*100).toFixed(1)+' % · '+reach+' Nachfolger';
+ });}
+function selectItem(item){state.selected=item;inspect();updateDimensions();scheduleDraw()}
+
+const visibleEdges=()=>graph.edges.filter((e,i)=>state.types.has(e.type.id)&&((i*37+17)%100)<state.density&&(!state.onlySelected||!state.selected||(state.selected.id?.startsWith('N')?(e.from===state.selected||e.to===state.selected):e===state.selected)));
+function project(n){const fit=Math.min((W-125)/960,(H-80)/920);const offsetX=W/2+state.panX,offsetY=H/2+state.panY;
+ if(state.mode==='2d')return{x:offsetX+n.x*fit*state.zoom,y:offsetY-n.z*fit*state.zoom,scale:fit*state.zoom,depth:0};
+ const cy=Math.cos(state.yaw),sy=Math.sin(state.yaw),cp=Math.cos(state.pitch),sp=Math.sin(state.pitch);
+ const right={x:cy,y:-sy,z:0},up={x:-sy*sp,y:-cy*sp,z:cp},eye={x:sy*cp,y:cy*cp,z:sp};
+ const x=n.x3d??n.x,y=n.y3d??n.y,z=n.z3d??n.z;
+ const depth=state.distance-(x*eye.x+y*eye.y+z*eye.z),scale=1150*state.zoom/Math.max(250,depth);
+ return{x:offsetX+(x*right.x+y*right.y+z*right.z)*scale,y:offsetY-(x*up.x+y*up.y+z*up.z)*scale,scale,depth};
+}
+function scheduleDraw(){if(drawQueued)return;drawQueued=true;requestAnimationFrame(()=>{drawQueued=false;draw()})}
+function roundedRect(c,x,y,w,h,r){c.beginPath();c.roundRect(x,y,w,h,Math.min(r,w/2,h/2))}
+function polygonPoints(n,p,r){const pts=[];const count=n.shape==='hex'?6:n.shape==='diamond'?4:0;for(let i=0;i<count;i++){const angle=-Math.PI/2+Math.PI*2*i/count+(count===6?Math.PI/6:0);pts.push([p.x+Math.cos(angle)*r,p.y+Math.sin(angle)*r])}return pts}
+function shapePath(c,n,p,r){if(n.shape==='circle'){c.beginPath();c.arc(p.x,p.y,r,0,Math.PI*2)}else if(n.shape==='roundrect'){roundedRect(c,p.x-r,p.y-r*.77,r*2,r*1.54,r*.37)}else{const pts=polygonPoints(n,p,r);c.beginPath();pts.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.closePath()}}
+function edgeGeometry(e){const a=projected.get(e.from.id),b=projected.get(e.to.id);if(!a||!b)return null;const dx=b.x-a.x,dy=b.y-a.y,len=Math.hypot(dx,dy)||1;const bend=clamp(Math.sin(parseInt(e.id.slice(1))*2.37)*16,-16,16);const nx=-dy/len,ny=dx/len,mid={x:(a.x+b.x)/2+nx*bend,y:(a.y+b.y)/2+ny*bend};const radius=e.to.r*b.scale*state.nodeSize+.8;const ang=Math.atan2(b.y-mid.y,b.x-mid.x);const end={x:b.x-Math.cos(ang)*radius,y:b.y-Math.sin(ang)*radius};return{a,b,mid,end,ang}}
+function arrow(ctx,e,g,size=5){const{end,ang}=g;ctx.save();ctx.translate(end.x,end.y);ctx.rotate(ang);ctx.strokeStyle=e.type.color;ctx.fillStyle=e.type.color;ctx.lineWidth=1.3;ctx.beginPath();const typ=e.type.arrow;if(typ==='dot'){ctx.arc(-size*.7,0,size*.5,0,Math.PI*2);ctx.fill()}else if(typ==='bar'){ctx.moveTo(-size*.55,-size);ctx.lineTo(-size*.55,size);ctx.stroke()}else if(typ==='diamond'){ctx.moveTo(0,0);ctx.lineTo(-size,-size*.65);ctx.lineTo(-size*2,0);ctx.lineTo(-size,size*.65);ctx.closePath();ctx.fill()}else if(typ==='chevron'){ctx.moveTo(-size,-size*.8);ctx.lineTo(0,0);ctx.lineTo(-size,size*.8);ctx.stroke()}else{ctx.moveTo(0,0);ctx.lineTo(-size*1.65,-size*.72);ctx.lineTo(-size*1.65,size*.72);ctx.closePath();ctx.fill();if(typ==='double'){ctx.beginPath();ctx.moveTo(-size*1.9,-size*.8);ctx.lineTo(-size*2.8,0);ctx.lineTo(-size*1.9,size*.8);ctx.stroke()}}ctx.restore()}
+function drawEdge(c,e,highlight=false,opacity=1){const g=edgeGeometry(e);if(!g)return;const impact=state.showImpact&&(Math.abs(e.to.confidence-e.to.baseConfidence)>.002||e.from.overrideConfidence!==null);
+ const active=state.selected&&(state.selected===e||state.selected===e.from||state.selected===e.to);const hover=state.hovered&&(state.hovered===e||state.hovered===e.from||state.hovered===e.to);const bright=highlight||active||hover; c.save();const primary3d=state.mode==='3d'&&e.primary;c.globalAlpha=opacity*(bright?.98:impact?.53:primary3d?.72:.105);c.strokeStyle=impact?(e.to.confidence<e.to.baseConfidence?'#ff838f':'#83eab6'):e.type.color;c.lineWidth=bright?2.5:impact?1.85:primary3d?2.35:.72;c.setLineDash(primary3d?[]:e.type.dash);c.beginPath();c.moveTo(g.a.x,g.a.y);c.quadraticCurveTo(g.mid.x,g.mid.y,g.end.x,g.end.y);c.stroke();c.setLineDash([]);arrow(c,e,g,bright?6:3.6);
+ const shouldShow=state.showSymbols&&(bright||state.density<=25||((parseInt(e.id.slice(1))*13)%17===0));
+ if(shouldShow){const t=.52, x=(1-t)*(1-t)*g.a.x+2*(1-t)*t*g.mid.x+t*t*g.end.x,y=(1-t)*(1-t)*g.a.y+2*(1-t)*t*g.mid.y+t*t*g.end.y;const label=bright?e.type.symbol+' '+Math.round(e.strength*100)+'%':e.type.symbol;c.globalAlpha=bright?1:.65;c.font=bright?'11px system-ui':'10px system-ui';const wid=c.measureText(label).width+8;c.fillStyle='#0b1624';roundedRect(c,x-wid/2,y-9,wid,17,4);c.fill();c.fillStyle=e.type.color;c.textAlign='center';c.textBaseline='middle';c.fillText(label,x,y-.5)} c.restore();}
+function drawGuides(){ctx.save();if(state.mode==='2d'){
+ LEVELS.forEach((l,i)=>{const p=project({x:0,y:0,z:(i-4.5)*92});const y=p.y;ctx.strokeStyle=i===0?'#4d8076':'#273b50';ctx.lineWidth=i===0?1.1:.75;ctx.setLineDash(i===0?[]:[3,6]);ctx.beginPath();ctx.moveTo(42,y);ctx.lineTo(W-20,y);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle=l.color;ctx.globalAlpha=.83;ctx.font='11px system-ui';ctx.textAlign='left';ctx.fillText('L'+i,12,y+4);if(i===0||i===9){ctx.font='10px system-ui';ctx.fillText(i===0?'FUNDAMENT':'KOMPLEXITÄT',49,y-8)}});
+ }else{const baseZ=graph.perLevel[0][0].z3d;ctx.strokeStyle='#314961';ctx.lineWidth=.7;ctx.globalAlpha=.42;
+  for(let k=-3;k<=3;k++){let a=project({x:k*100,y:-360,z:baseZ}),b=project({x:k*100,y:360,z:baseZ});ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();a=project({x:-360,y:k*100,z:baseZ}),b=project({x:360,y:k*100,z:baseZ});ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke()}
+  ctx.globalAlpha=1;const origin=project({x:0,y:0,z:baseZ});for(const [v,label,color] of [[{x:210,y:0,z:baseZ},'X','#fc8d91'],[{x:0,y:210,z:baseZ},'Y','#84c4fa'],[{x:0,y:0,z:baseZ+260},'Z','#78e6c5']]){const p=project(v);ctx.strokeStyle=color;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(origin.x,origin.y);ctx.lineTo(p.x,p.y);ctx.stroke();ctx.fillStyle=color;ctx.font='bold 12px system-ui';ctx.fillText(label,p.x+6,p.y-5)}
+ }
+ ctx.restore()}
+function drawTreeVolume(){
+ if(state.mode!=='3d')return;
+ ctx.save();
+ const rings=graph.layerEnvelopes.map(env=>Array.from({length:40},(_,i)=>{
+  const a=i/40*Math.PI*2;
+  return project({x:env.cx+Math.cos(a)*env.rx,y:env.cy+Math.sin(a)*env.ry,z:env.z});
+ }));
+ // Verbinde die Querschnittsebenen zu einem transparenten räumlichen Körper.
+ for(let L=0;L<rings.length-1;L++){
+  const a=rings[L],b=rings[L+1],col=LEVELS[L+1].color;
+  for(let i=0;i<a.length;i++){
+   const j=(i+1)%a.length;ctx.beginPath();ctx.moveTo(a[i].x,a[i].y);ctx.lineTo(a[j].x,a[j].y);ctx.lineTo(b[j].x,b[j].y);ctx.lineTo(b[i].x,b[i].y);ctx.closePath();
+   ctx.fillStyle=col;ctx.globalAlpha=.018;ctx.fill();
+  }
+ }
+ // Jede Ebene bleibt als eigene Wachstumsschicht erkennbar.
+ rings.forEach((pts,L)=>{
+  ctx.save();ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.closePath();
+  ctx.fillStyle=LEVELS[L].color;ctx.globalAlpha=L===0?.105:.022;ctx.fill();
+  ctx.strokeStyle=LEVELS[L].color;ctx.globalAlpha=L===0?.82:.24;ctx.lineWidth=L===0?2:1;ctx.setLineDash(L===0?[]:[3,5]);ctx.stroke();ctx.setLineDash([]);ctx.restore();
+  const env=graph.layerEnvelopes[L],label=project({x:env.cx-env.rx-18,y:env.cy,z:env.z});
+  ctx.save();ctx.globalAlpha=.78;ctx.fillStyle=LEVELS[L].color;ctx.font='10px system-ui';ctx.textAlign='right';ctx.fillText(L===0?'AXIOME / WURZELEBENE':`L${L} · ${LEVELS[L].name.toUpperCase()}`,label.x,label.y);ctx.restore();
+ });
+ // Die drei Axiome spannen die sichtbare Fundamentfläche auf.
+ const roots=graph.perLevel[0].map(n=>project(n));
+ if(roots.length>=3){ctx.save();ctx.beginPath();ctx.moveTo(roots[0].x,roots[0].y);roots.slice(1).forEach(p=>ctx.lineTo(p.x,p.y));ctx.closePath();ctx.fillStyle='#78e6c5';ctx.globalAlpha=.11;ctx.fill();ctx.strokeStyle='#78e6c5';ctx.globalAlpha=.9;ctx.lineWidth=2;ctx.stroke();ctx.restore()}
+ ctx.restore();
+}
+function drawConfidence(){if(!state.showConfidence)return;ctx.save();ctx.textAlign='right';ctx.font='10px system-ui';LEVELS.forEach((l,i)=>{const vals=graph.perLevel[i];const p=project({x:0,y:0,z:(i-4.5)*92});const mean=vals.reduce((sum,n)=>sum+n.confidence,0)/vals.length;const y=state.mode==='2d'?p.y:15+i*18;if(state.mode==='2d'){ctx.fillStyle='#9cb3c7';ctx.fillText('~'+Math.round(mean*100)+'%',W-15,y-8)}else{ctx.fillStyle=l.color;ctx.fillText('L'+i+'  ~'+Math.round(mean*100)+'%',W-15,y+11)}});ctx.restore()}
+function drawNode(c,n){const p=projected.get(n.id),r=clamp(n.r*p.scale*state.nodeSize,4,45);const selected=state.selected===n,hover=state.hovered===n;const related=state.selected?.id?.startsWith('N')&&(n===state.selected||state.selected.parents?.some(e=>e.from===n)||state.selected.children?.some(e=>e.to===n));const muted=state.onlySelected&&state.selected?.id?.startsWith('N')&&!related;
+ const delta=n.confidence-n.baseConfidence,impacted=state.showImpact&&Math.abs(delta)>.002,review=state.showImpact&&state.review.has(n);
+ c.save();c.globalAlpha=muted?.18:1;if(selected||hover||impacted){c.shadowColor=impacted?(delta<0?'#ff6d79':'#78eec1'):n.color;c.shadowBlur=impacted?26:22}
+ if(review&&!impacted){shapePath(c,n,p,r+4);c.strokeStyle='#f1b669';c.lineWidth=1.2;c.setLineDash([2.4,3.4]);c.stroke();c.setLineDash([])}
+ shapePath(c,n,p,r);if(state.mode==='3d'&&n.shape==='circle'){
+  const grad=c.createRadialGradient(p.x-r*.34,p.y-r*.42,r*.08,p.x,p.y,r*1.15);grad.addColorStop(0,impacted?(delta<0?'#ffb2b5':'#c3ffe0'):'#f4fffd');grad.addColorStop(.24,impacted?(delta<0?'#a34a59':'#3f8e75'):'#477b82');grad.addColorStop(1,impacted?(delta<0?'#251a2b':'#102b2b'):'#101c30');c.fillStyle=grad;
+ }else c.fillStyle=impacted?(delta<0?'#432433':'#173d37'):'#15263a';c.fill();c.lineWidth=selected?3:hover?2.25:impacted?2.4:n.L<2?2:1.45;c.strokeStyle=impacted?(delta<0?'#ff8894':'#80f1c3'):n.color;c.stroke();c.shadowBlur=0;
+ if(n.L<=3){shapePath(c,n,p,r*.74);c.globalAlpha=muted?.08:.15;c.fillStyle=n.color;c.fill();c.globalAlpha=muted?.18:1}
+ if(r>6){c.fillStyle=selected?'#fff':'#dcebf5';c.font=(n.L<=2?'bold ':'')+`${clamp(r*.63,8,12)}px system-ui`;c.textAlign='center';c.textBaseline='middle';c.fillText(String(n.i+1),p.x,p.y+.5)}
+ if(state.showImpact&&impacted&&r>=7){c.fillStyle=delta<0?'#ff9ca3':'#9cf0c8';c.font='bold 9px system-ui';c.textAlign='center';c.textBaseline='middle';c.fillText((delta<0?'':'+' )+(delta*100).toFixed(0),p.x,p.y+r+10)}
+ if(n.overrideConfidence!==null){c.beginPath();c.fillStyle='#fff2b3';c.arc(p.x+r*.68,p.y-r*.68,2.9,0,Math.PI*2);c.fill()}
+ if(selected||hover){c.fillStyle='#f4fcff';c.textAlign='center';c.font='12px system-ui';c.fillText(n.id,p.x,p.y-r-12)}c.restore()}
+function draw(){if(!W||!H)return;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);const grd=ctx.createRadialGradient(W*.48,H*.4,60,W*.48,H*.4,Math.max(W,H));grd.addColorStop(0,'#14263b');grd.addColorStop(1,'#0b1422');ctx.fillStyle=grd;ctx.fillRect(0,0,W,H);
+ projected=new Map(graph.nodes.map(n=>[n.id,project(n)]));shownEdges=visibleEdges();drawGuides();drawTreeVolume();const related=shownEdges.filter(e=>state.selected&&(e===state.selected||e.from===state.selected||e.to===state.selected)||state.hovered&&(e===state.hovered||e.from===state.hovered||e.to===state.hovered));
+ shownEdges.forEach(e=>{if(!related.includes(e))drawEdge(ctx,e,false,state.onlySelected&&state.selected?.id?.startsWith('N')?.75:1)});related.forEach(e=>drawEdge(ctx,e,true));
+ const ordered=graph.nodes.slice().sort((a,b)=>state.mode==='3d'?projected.get(b.id).depth-projected.get(a.id).depth:a.L-b.L);ordered.forEach(n=>drawNode(ctx,n));drawConfidence();$('edgesCount').textContent=shownEdges.length;$('status').textContent=`100 Knoten · ${shownEdges.length} sichtbare Kanten · ${graph.edges.length} Verknüpfungen gesamt`;
+}
+function nearestNode(mx,my){let result=null,best=18;graph.nodes.forEach(n=>{const p=projected.get(n.id);if(!p)return;const r=clamp(n.r*p.scale*state.nodeSize,4,45);const d=Math.hypot(mx-p.x,my-p.y);if(d<Math.max(10,r+5)&&d<best+r*.45){best=Math.max(0,d-r*.45);result=n}});return result}
+function segmentDistance(px,py,ax,ay,bx,by){const dx=bx-ax,dy=by-ay,t=clamp(((px-ax)*dx+(py-ay)*dy)/(dx*dx+dy*dy||1),0,1);return Math.hypot(px-(ax+t*dx),py-(ay+t*dy))}
+function nearestEdge(mx,my){let found=null,dist=7;shownEdges.forEach(e=>{const g=edgeGeometry(e);if(!g)return;const a=g.a,b=g.end,m={x:(g.a.x+2*g.mid.x+b.x)/4,y:(g.a.y+2*g.mid.y+b.y)/4};const d=Math.min(segmentDistance(mx,my,a.x,a.y,m.x,m.y),segmentDistance(mx,my,m.x,m.y,b.x,b.y));if(d<dist){dist=d;found=e}});return found}
+function inspect(){
+ const s=state.selected,box=$('inspector');
+ if(!s){box.innerHTML='<strong>Ein Element auswählen</strong><p class="sub">Knoten anklicken: Wahrheitswert und Erkenntnistyp bearbeiten. Kante anklicken: Relation und Wirkstärke ändern.</p>';return}
+ if(s.id.startsWith('N')){
+  const level=LEVELS[s.L],delta=(s.confidence-s.baseConfidence)*100;
+  const roleOptions=NODE_ROLES.map(r=>`<option value="${r.id}" ${s.role===r.id?'selected':''}>${r.name}</option>`).join('');
+  box.innerHTML=`<strong style="color:${level.color}">${s.id} · ${level.name}</strong>
+  <div class="label">L${s.L} · ${ROLE_BY_ID.get(s.role).name} · Ausgänge ${s.children.length}</div>
+  <div class="label">Referenzwert / aktueller Simulationswert</div><div class="val">${(s.baseConfidence*100).toFixed(1)} % → <strong id="currentValue">${(s.confidence*100).toFixed(1)} %</strong> <span id="deltaValue" class="${delta<0?'delta-neg':'delta-pos'}">(${delta>=0?'+':''}${delta.toFixed(1)} PP)</span></div>
+  <div class="editor">
+  <label for="nodeTruth">Wahrheitswert / Konfidenz bearbeiten</label>
+  <div class="control-pair"><input type="range" id="nodeTruth" min="0" max="100" step="0.5" value="${(s.confidence*100).toFixed(1)}"><input id="nodeNumber" type="number" min="0" max="100" step="0.5" value="${(s.confidence*100).toFixed(1)}" aria-label="Konfidenz in Prozent"></div>
+  <label for="nodeRole">Erkenntnistyp (unabhängig von Ebene)</label><select id="nodeRole">${roleOptions}</select>
+  <button id="unpinNode">Eigenen Wert lösen</button>
+  <small>${s.overrideConfidence===null?'Berechnet, nicht fixiert. Beim Bearbeiten wird der Wert fixiert.':'Wert manuell fixiert. Reagiert nicht auf eingehende Kanten.'}</small>
+  </div><div id="nodeImpact" class="sub"></div>`;
+  const edit=v=>{if(!Number.isFinite(v))return;const value=clamp(v,0,100);s.overrideConfidence=value/100;recompute();
+   $('nodeTruth').value=value;$('nodeNumber').value=value;
+   $('currentValue').textContent=(s.confidence*100).toFixed(1)+' %';
+   const d=(s.confidence-s.baseConfidence)*100;$('deltaValue').textContent='('+(d>=0?'+':'')+d.toFixed(1)+' PP)';
+   $('deltaValue').className=d<0?'delta-neg':'delta-pos';refreshNodeImpact(s);
+  };
+  $('nodeTruth').oninput=e=>edit(+e.target.value);$('nodeNumber').onchange=e=>edit(+e.target.value);
+  $('nodeRole').onchange=e=>{s.role=e.target.value;s.shape=ROLE_BY_ID.get(s.role).shape;scheduleDraw();inspect()};
+  $('unpinNode').onclick=()=>{s.overrideConfidence=null;recompute();inspect()};refreshNodeImpact(s);
+ }else{
+  const behavior=edgeBehavior(s);const opts=EDGE_TYPES.map(t=>`<option value="${t.id}" ${s.type===t?'selected':''}>${t.symbol} ${t.name}</option>`).join('');
+  box.innerHTML=`<strong style="color:${s.type.color}">${s.type.symbol} ${s.type.name}</strong><div class="val">${s.from.id} → ${s.to.id}</div>
+  <div class="editor"><label for="edgeType">Semantische Relation</label><select id="edgeType">${opts}</select>
+  <label for="edgeStrength">Wirkstärke (Simulation)</label><div class="control-pair"><input id="edgeStrength" type="range" min="0" max="100" step="1" value="${Math.round(s.strength*100)}"><strong id="edgePower">${Math.round(s.strength*100)} %</strong></div>
+  <small id="edgeMode">${behavior==='neutral'?'Keine numerische Weitergabe':'Übertragungsmodus: '+behavior}</small>
+  </div><p class="sub">Pfeilspitze: ${s.type.arrow}. Kantentypen legen den Wirkmodus fest; diese Regeln sind konfigurierbare Heuristiken.</p>`;
+  $('edgeType').onchange=e=>{s.type=EDGE_TYPES.find(t=>t.id===e.target.value);s.strength=RELATION_BEHAVIOR[s.type.id][1];recompute();inspect()};
+  $('edgeStrength').oninput=e=>{s.strength=+e.target.value/100;$('edgePower').textContent=e.target.value+' %';recompute()};
+ }
+}
+function refreshNodeImpact(n){const box=$('nodeImpact');if(!box)return;
+ const reachable=descendants([n],false).size, propagating=descendants([n],true).size;
+ box.innerHTML=`<strong>${reachable}</strong> erreichbare Aussagen · <strong>${propagating}</strong> mit numerischem Wirkpfad. <strong>${n.L===0?'Fundament / Modell-Dimension':'Abgeleiteter Erkenntnisknoten'}</strong>.<br>Geänderte Axiome können Neuprüfungen der Kantenstruktur erforderlich machen.`;
+}
+
+function mountControls(){LEVELS.forEach((l,i)=>{const vals=graph.perLevel[i],mean=vals.reduce((s,n)=>s+n.confidence,0)/vals.length;const d=document.createElement('div');d.className='level-item';d.innerHTML=`<span class="level-color" style="background:${l.color}"></span><b>L${i}</b><span>${l.name}</span><em id="level-val-${i}">${l.count} · ~${Math.round(mean*100)}%</em>`;$('levels').appendChild(d)});
+ graph.perLevel[0].forEach((a,i)=>{
+  const btn=document.createElement('button');btn.className='dimension';btn.style.setProperty('--dc',a.color);
+  btn.innerHTML=`<i></i><div><b>Dimension A${i+1} · ${a.id}</b><span class="dimension-score"></span></div>`;
+  btn.onclick=()=>selectItem(a);$('dimensions').appendChild(btn);
+ });
+ EDGE_TYPES.forEach(t=>{const row=document.createElement('label');row.className='edge-item';row.innerHTML=`<input type="checkbox" checked aria-label="${t.name}"><i class="edge-line" style="--c:${t.color};border-top-style:${t.dash.length?'dashed':'solid'}"></i><span>${t.name}</span><small style="color:${t.color}">${t.symbol}</small>`;row.querySelector('input').addEventListener('change',ev=>{ev.target.checked?state.types.add(t.id):state.types.delete(t.id);scheduleDraw()});$('legend').appendChild(row)});
+ updateDimensions();$('mode2d').onclick=()=>setMode('2d');$('mode3d').onclick=()=>setMode('3d');$('reset').onclick=()=>{state.zoom=1;state.panX=state.panY=0;state.yaw=-.78;state.pitch=.66;state.distance=1880;state.selected=null;inspect();updateDimensions();scheduleDraw()};
+ $('density').oninput=e=>{state.density=+e.target.value;$('densityValue').textContent=state.density+' %';scheduleDraw()};$('size').oninput=e=>{state.nodeSize=+e.target.value/100;$('sizeValue').textContent=e.target.value+' %';scheduleDraw()};$('symbols').onchange=e=>{state.showSymbols=e.target.checked;scheduleDraw()};$('confidence').onchange=e=>{state.showConfidence=e.target.checked;scheduleDraw()};$('onlySelected').onchange=e=>{state.onlySelected=e.target.checked;scheduleDraw()};
+ $('showImpact').onchange=e=>{state.showImpact=e.target.checked;scheduleDraw()};$('restoreValues').onclick=()=>{graph.nodes.forEach(n=>n.overrideConfidence=null);graph.edges.forEach(e=>e.strength=RELATION_BEHAVIOR[e.type.id][1]);recompute();inspect()};
+ $('svgExport').onclick=()=>downloadFile(new Blob([buildSVG()],{type:'image/svg+xml;charset=utf-8'}),'first-principles-graph.svg');$('pngExport').onclick=()=>exportRaster('image/png','png');$('jpgExport').onclick=()=>exportRaster('image/jpeg','jpg');$('dataExport').onclick=()=>{const safe={levels:LEVELS,edgeTypes:EDGE_TYPES,nodes:graph.nodes.map(({parents,children,layoutParent,...x})=>({...x,layoutParent:layoutParent?.id||null})),edges:graph.edges.map(e=>({id:e.id,from:e.from.id,to:e.to.id,type:e.type.id,confidence:e.confidence,strength:e.strength}))};downloadFile(new Blob([JSON.stringify(safe,null,2)],{type:'application/json'}),'first-principles-graph.json')};
+}
+function setMode(mode){state.mode=mode;state.panX=0;state.panY=0;state.zoom=1;$('mode2d').classList.toggle('active',mode==='2d');$('mode3d').classList.toggle('active',mode==='3d');$('controlsHelp').textContent=mode==='2d'?'Mausrad: Zoom · Ziehen: Verschieben · Rechtsklick+Ziehen: Pan · Klick: Inspektion':'Linke Maustaste: Körper drehen · Rechte Maustaste: Pan · Mausrad: Zoom · Klick: Inspektion';$('cameraLabel').textContent=mode==='2d'?'XZ-Projektion · Z = Erkenntnisebene':'3D-Schichtkörper · X/Y/Z';scheduleDraw()}
+function resize(){const r=viewport.getBoundingClientRect();W=Math.max(320,r.width);H=Math.max(300,r.height);dpr=Math.min(window.devicePixelRatio||1,2);canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);scheduleDraw()}
+function bindMouse(){canvas.addEventListener('contextmenu',e=>e.preventDefault());canvas.addEventListener('pointerdown',e=>{canvas.setPointerCapture(e.pointerId);drag={x:e.clientX,y:e.clientY,button:e.button,mode:state.mode};wasDragged=false;canvas.classList.add('dragging')});canvas.addEventListener('pointermove',e=>{const bounds=canvas.getBoundingClientRect(),x=e.clientX-bounds.left,y=e.clientY-bounds.top;if(drag){const dx=e.clientX-drag.x,dy=e.clientY-drag.y;drag.x=e.clientX;drag.y=e.clientY;if(Math.abs(dx)+Math.abs(dy)>1)wasDragged=true;if(state.mode==='3d'&&drag.button===0){state.yaw+=dx*.009;state.pitch=clamp(state.pitch-dy*.009,-1.35,1.35)}else{state.panX+=dx;state.panY+=dy}scheduleDraw()}else{const candidate=nearestNode(x,y)||nearestEdge(x,y);if(candidate!==state.hovered){state.hovered=candidate;scheduleDraw()}canvas.style.cursor=candidate?'pointer':'grab'}});canvas.addEventListener('pointerup',e=>{const bounds=canvas.getBoundingClientRect();if(drag&&!wasDragged&&e.button===0){selectItem(nearestNode(e.clientX-bounds.left,e.clientY-bounds.top)||nearestEdge(e.clientX-bounds.left,e.clientY-bounds.top))}drag=null;canvas.classList.remove('dragging')});canvas.addEventListener('pointercancel',()=>{drag=null;canvas.classList.remove('dragging')});canvas.addEventListener('wheel',e=>{e.preventDefault();state.zoom=clamp(state.zoom*Math.exp(-e.deltaY*.0011),.35,4);scheduleDraw()},{passive:false});canvas.addEventListener('dblclick',()=>{$('reset').click()})}
+function downloadFile(blob,name){const href=URL.createObjectURL(blob),a=document.createElement('a');a.href=href;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(href),1500)}
+function exportRaster(mime,ext){const scale=2,off=document.createElement('canvas');off.width=Math.round(W*scale);off.height=Math.round(H*scale);const context=off.getContext('2d');context.fillStyle='#0b1422';context.fillRect(0,0,off.width,off.height);context.drawImage(canvas,0,0,off.width,off.height);off.toBlob(blob=>{if(blob)downloadFile(blob,'first-principles-graph.'+ext)},mime,.94)}
+function esc(s){return String(s).replace(/[&<>'"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&apos;','"':'&quot;'}[ch]))}
+function svgShape(n,p,r){if(n.shape==='circle')return`<circle cx="${p.x}" cy="${p.y}" r="${r}"/>`;if(n.shape==='roundrect')return`<rect x="${p.x-r}" y="${p.y-r*.77}" width="${r*2}" height="${r*1.54}" rx="${r*.37}"/>`;return`<polygon points="${polygonPoints(n,p,r).map(p=>p.join(',')).join(' ')}"/>`}
+
+function svgArrow(e,g){
+ const size=4, typ=e.type.arrow, color=e.type.color,rot=g.ang*180/Math.PI;
+ const pre=`<g transform="translate(${g.end.x} ${g.end.y}) rotate(${rot})" fill="${color}" stroke="${color}" stroke-width="1.3" opacity=".78">`;
+ if(typ==='dot')return pre+`<circle cx="-3" cy="0" r="2.3"/></g>`;
+ if(typ==='bar')return pre+`<path d="M-2 -4 V4" fill="none"/></g>`;
+ if(typ==='diamond')return pre+`<path d="M0 0 L-4 -2.8 L-8 0 L-4 2.8 Z"/></g>`;
+ if(typ==='chevron')return pre+`<path d="M-4 -3.2 L0 0 L-4 3.2" fill="none"/></g>`;
+ const tail=typ==='double'?`<path d="M-8 -3.2 L-11.2 0 L-8 3.2" fill="none"/>`:'';
+ return pre+`<path d="M0 0 L-6.6 -2.9 L-6.6 2.9 Z"/>${tail}</g>`;
+}
+function buildSVG(){const out=[`<svg xmlns="http://www.w3.org/2000/svg" width="${Math.round(W)}" height="${Math.round(H)}" viewBox="0 0 ${W} ${H}">`,`<rect width="100%" height="100%" fill="#0b1422"/>`];
+ if(state.mode==='2d')LEVELS.forEach((l,i)=>{const y=project({x:0,y:0,z:(i-4.5)*92}).y;out.push(`<path d="M42 ${y} H${W-20}" stroke="#273b50" stroke-dasharray="3 6"/><text x="12" y="${y+4}" font-size="11" font-family="system-ui" fill="${l.color}">L${i}</text>`)});
+ else{
+  const rings=graph.layerEnvelopes.map(env=>Array.from({length:40},(_,i)=>{const a=i/40*Math.PI*2;return project({x:env.cx+Math.cos(a)*env.rx,y:env.cy+Math.sin(a)*env.ry,z:env.z})}));
+  for(let L=0;L<rings.length-1;L++){const a=rings[L],b=rings[L+1];for(let i=0;i<a.length;i++){const j=(i+1)%a.length;out.push(`<path d="M${a[i].x} ${a[i].y} L${a[j].x} ${a[j].y} L${b[j].x} ${b[j].y} L${b[i].x} ${b[i].y} Z" fill="${LEVELS[L+1].color}" fill-opacity=".035" stroke="none"/>`)}}
+  rings.forEach((pts,L)=>out.push(`<polygon points="${pts.map(p=>p.x+','+p.y).join(' ')}" fill="${LEVELS[L].color}" fill-opacity="${L===0?.105:.022}" stroke="${LEVELS[L].color}" stroke-opacity="${L===0?.82:.24}" stroke-dasharray="${L===0?'none':'3 5'}"/>`));
+  const roots=graph.perLevel[0].map(n=>project(n));out.push(`<polygon points="${roots.map(p=>p.x+','+p.y).join(' ')}" fill="#78e6c5" fill-opacity=".11" stroke="#78e6c5" stroke-width="2"/>`);
+ }
+ shownEdges.forEach(e=>{const g=edgeGeometry(e);if(!g)return;out.push(`<path d="M ${g.a.x.toFixed(2)} ${g.a.y.toFixed(2)} Q ${g.mid.x.toFixed(2)} ${g.mid.y.toFixed(2)} ${g.end.x.toFixed(2)} ${g.end.y.toFixed(2)}" fill="none" stroke="${state.showImpact&&Math.abs(e.to.confidence-e.to.baseConfidence)>.002?(e.to.confidence<e.to.baseConfidence?'#ff838f':'#83eab6'):e.type.color}" stroke-width="${state.showImpact&&Math.abs(e.to.confidence-e.to.baseConfidence)>.002?2:(state.mode==='3d'&&e.primary?2.35:1.15)}" stroke-opacity="${state.mode==='3d'&&e.primary?.72:.55}" ${e.type.dash.length?`stroke-dasharray="${e.type.dash.join(',')}"`:''}/>`);
+ out.push(svgArrow(e,g));
+ if(state.showSymbols&&(state.density<=25||parseInt(e.id.slice(1))*13%17===0)){const x=(g.a.x+2*g.mid.x+g.end.x)/4,y=(g.a.y+2*g.mid.y+g.end.y)/4;out.push(`<text x="${x}" y="${y}" text-anchor="middle" font-size="10" font-family="system-ui" fill="${e.type.color}">${esc(e.type.symbol)}</text>`)}});
+ graph.nodes.forEach(n=>{const p=projected.get(n.id),r=clamp(n.r*p.scale*state.nodeSize,4,45);const delta=n.confidence-n.baseConfidence,impact=state.showImpact&&Math.abs(delta)>.002;
+ out.push(`<g fill="${impact?(delta<0?'#432433':'#173d37'):'#15263a'}" stroke="${impact?(delta<0?'#ff8894':'#80f1c3'):n.color}" stroke-width="${impact?2.4:n.L<=2?2:1.35}">${svgShape(n,p,r)}</g>`);if(r>6)out.push(`<text x="${p.x}" y="${p.y+3.5}" text-anchor="middle" font-family="system-ui" font-size="${clamp(r*.63,8,12)}" fill="#dcebf5">${n.i+1}</text>`)});
+ if(state.showConfidence)LEVELS.forEach((l,i)=>{const vals=graph.perLevel[i],mean=vals.reduce((s,n)=>s+n.confidence,0)/vals.length,y=state.mode==='2d'?project({x:0,y:0,z:(i-4.5)*92}).y-8:26+i*18;out.push(`<text x="${W-15}" y="${y}" text-anchor="end" font-family="system-ui" font-size="10" fill="${l.color}">${state.mode==='3d'?'L'+i+' ':''}~${Math.round(mean*100)}%</text>`)});
+ out.push('</svg>');return out.join('')}
+mountControls();recompute();bindMouse();new ResizeObserver(resize).observe(viewport);resize();
+})();
+</script>
+</body>
+</html>

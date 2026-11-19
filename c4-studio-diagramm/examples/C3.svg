@@ -1,0 +1,179 @@
+<svg width="2785pt" height="418pt"
+ viewBox="0.00 0.00 2784.60 417.60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(28.8 388.8)">
+<title>G</title>
+<!-- 3 -->
+<g id="node1" class="node">
+<title>3</title>
+<g id="a_node1"><a xlink:href="#element=3" xlink:title="Zeigt Aufgaben, Streams und Freigaben. Ein Browser kann lokale stdio&#45;Prozesse nicht direkt starten.">
+<path fill="#e7eff8" stroke="#c8d6d2" stroke-width="1.2" d="M286,-250C286,-250 12,-250 12,-250 6,-250 0,-244 0,-238 0,-238 0,-166 0,-166 0,-160 6,-154 12,-154 12,-154 286,-154 286,-154 292,-154 298,-160 298,-166 298,-166 298,-238 298,-238 298,-244 292,-250 286,-250"/>
+<text text-anchor="middle" x="149" y="-226.6" font-family="Arial" font-size="13.00">Browser&#45;Oberfläche</text>
+<text text-anchor="middle" x="149" y="-212.6" font-family="Arial" font-size="13.00">[container]</text>
+<text text-anchor="middle" x="149" y="-198.6" font-family="Arial" font-size="13.00">Zeigt Aufgaben, Streams und Freigaben. Ein</text>
+<text text-anchor="middle" x="149" y="-184.6" font-family="Arial" font-size="13.00">Browser kann lokale stdio&#45;Prozesse nicht</text>
+<text text-anchor="middle" x="149" y="-170.6" font-family="Arial" font-size="13.00">direkt starten.</text>
+</a>
+</g>
+</g>
+<!-- 5 -->
+<g id="node2" class="node">
+<title>5</title>
+<g id="a_node2"><a xlink:href="#element=5" xlink:title="Nimmt Prompt und Projektkontext entgegen.">
+<path fill="#f1edf9" stroke="#c8d6d2" stroke-width="1.2" d="M727,-236C727,-236 455,-236 455,-236 449,-236 443,-230 443,-224 443,-224 443,-180 443,-180 443,-174 449,-168 455,-168 455,-168 727,-168 727,-168 733,-168 739,-174 739,-180 739,-180 739,-224 739,-224 739,-230 733,-236 727,-236"/>
+<text text-anchor="middle" x="591" y="-212.6" font-family="Arial" font-size="13.00">Auftragseingang</text>
+<text text-anchor="middle" x="591" y="-198.6" font-family="Arial" font-size="13.00">[component]</text>
+<text text-anchor="middle" x="591" y="-184.6" font-family="Arial" font-size="13.00">Nimmt Prompt und Projektkontext entgegen.</text>
+</a>
+</g>
+</g>
+<!-- 3&#45;&gt;5 -->
+<g id="edge1" class="edge">
+<title>3&#45;&gt;5</title>
+<path fill="none" stroke="#9aaea7" d="M298.04,-202C342.34,-202 391.02,-202 435.71,-202"/>
+<polygon fill="#9aaea7" stroke="#9aaea7" points="435.85,-204.45 442.85,-202 435.85,-199.55 435.85,-204.45"/>
+<text text-anchor="middle" x="370.5" y="-205" font-family="Arial" font-size="10.00" fill="#526961">Sendet Auftrag</text>
+</g>
+<!-- 6 -->
+<g id="node3" class="node">
+<title>6</title>
+<g id="a_node3"><a xlink:href="#element=6" xlink:title="Wählt einen Agenten und übergibt Ergebnisse bei Bedarf an einen zweiten.">
+<path fill="#f1edf9" stroke="#c8d6d2" stroke-width="1.2" d="M1232,-243C1232,-243 982,-243 982,-243 976,-243 970,-237 970,-231 970,-231 970,-173 970,-173 970,-167 976,-161 982,-161 982,-161 1232,-161 1232,-161 1238,-161 1244,-167 1244,-173 1244,-173 1244,-231 1244,-231 1244,-237 1238,-243 1232,-243"/>
+<text text-anchor="middle" x="1107" y="-219.6" font-family="Arial" font-size="13.00">Orchestrator</text>
+<text text-anchor="middle" x="1107" y="-205.6" font-family="Arial" font-size="13.00">[component]</text>
+<text text-anchor="middle" x="1107" y="-191.6" font-family="Arial" font-size="13.00">Wählt einen Agenten und übergibt</text>
+<text text-anchor="middle" x="1107" y="-177.6" font-family="Arial" font-size="13.00">Ergebnisse bei Bedarf an einen zweiten.</text>
+</a>
+</g>
+</g>
+<!-- 5&#45;&gt;6 -->
+<g id="edge2" class="edge">
+<title>5&#45;&gt;6</title>
+<path fill="none" stroke="#9aaea7" d="M739.29,-202C809.42,-202 892.95,-202 962.57,-202"/>
+<polygon fill="#9aaea7" stroke="#9aaea7" points="962.7,-204.45 969.7,-202 962.7,-199.55 962.7,-204.45"/>
+<text text-anchor="middle" x="854.5" y="-205" font-family="Arial" font-size="10.00" fill="#526961">Übergibt Prompt und Kontext</text>
+</g>
+<!-- 6&#45;&gt;5 -->
+<g id="edge7" class="edge">
+<title>6&#45;&gt;5</title>
+<path fill="none" stroke="#9aaea7" d="M969.89,-174.76C956.46,-172.82 942.99,-171.17 930,-170 863.16,-163.97 845.87,-164.32 779,-170 768.37,-170.9 757.43,-172.09 746.43,-173.48"/>
+<polygon fill="#9aaea7" stroke="#9aaea7" points="745.83,-171.08 739.2,-174.41 746.46,-175.94 745.83,-171.08"/>
+<text text-anchor="middle" x="854.5" y="-184" font-family="Arial" font-size="10.00" fill="#526961">5. Ergebnis anzeigen oder nächste</text>
+<text text-anchor="middle" x="854.5" y="-173" font-family="Arial" font-size="10.00" fill="#526961">Sitzung starten</text>
+</g>
+<!-- 7 -->
+<g id="node4" class="node">
+<title>7</title>
+<g id="a_node4"><a xlink:href="#element=7" xlink:title="JSON&#45;RPC 2.0: initialize, session/new, session/prompt, session/update.">
+<path fill="#f1edf9" stroke="#c8d6d2" stroke-width="1.2" d="M1696,-243C1696,-243 1456,-243 1456,-243 1450,-243 1444,-237 1444,-231 1444,-231 1444,-173 1444,-173 1444,-167 1450,-161 1456,-161 1456,-161 1696,-161 1696,-161 1702,-161 1708,-167 1708,-173 1708,-173 1708,-231 1708,-231 1708,-237 1702,-243 1696,-243"/>
+<text text-anchor="middle" x="1576" y="-219.6" font-family="Arial" font-size="13.00">ACP&#45;Verbindung</text>
+<text text-anchor="middle" x="1576" y="-205.6" font-family="Arial" font-size="13.00">[component]</text>
+<text text-anchor="middle" x="1576" y="-191.6" font-family="Arial" font-size="13.00">JSON&#45;RPC 2.0: initialize, session/new,</text>
+<text text-anchor="middle" x="1576" y="-177.6" font-family="Arial" font-size="13.00">session/prompt, session/update.</text>
+</a>
+</g>
+</g>
+<!-- 6&#45;&gt;7 -->
+<g id="edge3" class="edge">
+<title>6&#45;&gt;7</title>
+<path fill="none" stroke="#9aaea7" d="M1244.02,-202C1304.56,-202 1375.77,-202 1436.59,-202"/>
+<polygon fill="#9aaea7" stroke="#9aaea7" points="1436.95,-204.45 1443.95,-202 1436.95,-199.55 1436.95,-204.45"/>
+<text text-anchor="middle" x="1344" y="-216" font-family="Arial" font-size="10.00" fill="#526961">1. Verbindung initialisieren /</text>
+<text text-anchor="middle" x="1344" y="-205" font-family="Arial" font-size="10.00" fill="#526961">Sitzung anlegen</text>
+</g>
+<!-- 7&#45;&gt;6 -->
+<g id="edge6" class="edge">
+<title>7&#45;&gt;6</title>
+<path fill="none" stroke="#9aaea7" d="M1443.71,-174.9C1430.34,-172.9 1416.93,-171.2 1404,-170 1350.89,-165.07 1337.12,-165.21 1284,-170 1273.34,-170.96 1262.37,-172.24 1251.35,-173.74"/>
+<polygon fill="#9aaea7" stroke="#9aaea7" points="1250.7,-171.36 1244.11,-174.76 1251.38,-176.21 1250.7,-171.36"/>
+<text text-anchor="middle" x="1344" y="-184" font-family="Arial" font-size="10.00" fill="#526961">4. Updates und Abschluss</text>
+<text text-anchor="middle" x="1344" y="-173" font-family="Arial" font-size="10.00" fill="#526961">weiterreichen</text>
+</g>
+<!-- 8 -->
+<g id="node5" class="node">
+<title>8</title>
+<g id="a_node5"><a xlink:href="#element=8" xlink:title="Bearbeitet agentenseitige Datei&#45;, Terminal&#45; und Berechtigungsanfragen gemäß Fähigkeiten.">
+<path fill="#f1edf9" stroke="#c8d6d2" stroke-width="1.2" d="M2231,-360C2231,-360 1953,-360 1953,-360 1947,-360 1941,-354 1941,-348 1941,-348 1941,-276 1941,-276 1941,-270 1947,-264 1953,-264 1953,-264 2231,-264 2231,-264 2237,-264 2243,-270 2243,-276 2243,-276 2243,-348 2243,-348 2243,-354 2237,-360 2231,-360"/>
+<text text-anchor="middle" x="2092" y="-336.6" font-family="Arial" font-size="13.00">Freigabe &amp; Werkzeuge</text>
+<text text-anchor="middle" x="2092" y="-322.6" font-family="Arial" font-size="13.00">[component]</text>
+<text text-anchor="middle" x="2092" y="-308.6" font-family="Arial" font-size="13.00">Bearbeitet agentenseitige Datei&#45;,</text>
+<text text-anchor="middle" x="2092" y="-294.6" font-family="Arial" font-size="13.00">Terminal&#45; und Berechtigungsanfragen gemäß</text>
+<text text-anchor="middle" x="2092" y="-280.6" font-family="Arial" font-size="13.00">Fähigkeiten.</text>
+</a>
+</g>
+</g>
+<!-- 7&#45;&gt;8 -->
+<g id="edge4" class="edge">
+<title>7&#45;&gt;8</title>
+<path fill="none" stroke="#9aaea7" d="M1684.14,-243.13C1705.1,-250.17 1727.07,-256.85 1748,-262 1807.95,-276.74 1874.92,-287.7 1933.67,-295.53"/>
+<polygon fill="#9aaea7" stroke="#9aaea7" points="1933.53,-297.99 1940.8,-296.47 1934.18,-293.13 1933.53,-297.99"/>
+<text text-anchor="middle" x="1824.5" y="-305" font-family="Arial" font-size="10.00" fill="#526961">2. Werkzeug&#45; oder Freigabeanfrage</text>
+<text text-anchor="middle" x="1824.5" y="-294" font-family="Arial" font-size="10.00" fill="#526961">bearbeiten</text>
+</g>
+<!-- 9 -->
+<g id="node6" class="node">
+<title>9</title>
+<g id="a_node6"><a xlink:href="#element=9" xlink:title="Eigenständiger Agentenprozess mit ACP&#45;Schnittstelle; kein automatischer Peer&#45;Kanal.">
+<path fill="#e7eff8" stroke="#c8d6d2" stroke-width="1.2" d="M2219.5,-221C2219.5,-221 1964.5,-221 1964.5,-221 1958.5,-221 1952.5,-215 1952.5,-209 1952.5,-209 1952.5,-137 1952.5,-137 1952.5,-131 1958.5,-125 1964.5,-125 1964.5,-125 2219.5,-125 2219.5,-125 2225.5,-125 2231.5,-131 2231.5,-137 2231.5,-137 2231.5,-209 2231.5,-209 2231.5,-215 2225.5,-221 2219.5,-221"/>
+<text text-anchor="middle" x="2092" y="-197.6" font-family="Arial" font-size="13.00">Agent A · z. B. Cursor CLI</text>
+<text text-anchor="middle" x="2092" y="-183.6" font-family="Arial" font-size="13.00">[container]</text>
+<text text-anchor="middle" x="2092" y="-169.6" font-family="Arial" font-size="13.00">Eigenständiger Agentenprozess mit ACP&#45;</text>
+<text text-anchor="middle" x="2092" y="-155.6" font-family="Arial" font-size="13.00">Schnittstelle; kein automatischer Peer&#45;</text>
+<text text-anchor="middle" x="2092" y="-141.6" font-family="Arial" font-size="13.00">Kanal.</text>
+</a>
+</g>
+</g>
+<!-- 7&#45;&gt;9 -->
+<g id="edge8" class="edge">
+<title>7&#45;&gt;9</title>
+<path fill="none" stroke="#9aaea7" d="M1708.35,-177.44C1721.71,-175.63 1735.1,-174.09 1748,-173 1812.56,-167.56 1884.21,-166.75 1945.25,-167.61"/>
+<polygon fill="#9aaea7" stroke="#9aaea7" points="1945.22,-170.06 1952.26,-167.72 1945.3,-165.16 1945.22,-170.06"/>
+<text text-anchor="middle" x="1824.5" y="-176" font-family="Arial" font-size="10.00" fill="#526961">Steuert Agent A</text>
+</g>
+<!-- 10 -->
+<g id="node7" class="node">
+<title>10</title>
+<g id="a_node7"><a xlink:href="#element=10" xlink:title="Separate Sitzung. Grok&#45;Unterstützung muss für das konkrete Produkt geprüft werden.">
+<path fill="#e7eff8" stroke="#c8d6d2" stroke-width="1.2" d="M2228,-82C2228,-82 1956,-82 1956,-82 1950,-82 1944,-76 1944,-70 1944,-70 1944,-12 1944,-12 1944,-6 1950,0 1956,0 1956,0 2228,0 2228,0 2234,0 2240,-6 2240,-12 2240,-12 2240,-70 2240,-70 2240,-76 2234,-82 2228,-82"/>
+<text text-anchor="middle" x="2092" y="-58.6" font-family="Arial" font-size="13.00">Agent B · kompatible CLI</text>
+<text text-anchor="middle" x="2092" y="-44.6" font-family="Arial" font-size="13.00">[container]</text>
+<text text-anchor="middle" x="2092" y="-30.6" font-family="Arial" font-size="13.00">Separate Sitzung. Grok&#45;Unterstützung muss</text>
+<text text-anchor="middle" x="2092" y="-16.6" font-family="Arial" font-size="13.00">für das konkrete Produkt geprüft werden.</text>
+</a>
+</g>
+</g>
+<!-- 7&#45;&gt;10 -->
+<g id="edge9" class="edge">
+<title>7&#45;&gt;10</title>
+<path fill="none" stroke="#9aaea7" d="M1703.95,-160.99C1718.79,-156.25 1733.72,-151.5 1748,-147 1814.39,-126.07 1888.13,-103.22 1950.17,-84.12"/>
+<polygon fill="#9aaea7" stroke="#9aaea7" points="1950.94,-86.45 1956.91,-82.05 1949.5,-81.77 1950.94,-86.45"/>
+<text text-anchor="middle" x="1824.5" y="-150" font-family="Arial" font-size="10.00" fill="#526961">Steuert Agent B</text>
+</g>
+<!-- 8&#45;&gt;7 -->
+<g id="edge5" class="edge">
+<title>8&#45;&gt;7</title>
+<path fill="none" stroke="#9aaea7" d="M1995.95,-263.89C1966.24,-250.8 1932.88,-238.03 1901,-230 1841.16,-214.92 1773.35,-207.62 1715.29,-204.19"/>
+<polygon fill="#9aaea7" stroke="#9aaea7" points="1715.38,-201.74 1708.25,-203.79 1715.11,-206.64 1715.38,-201.74"/>
+<text text-anchor="middle" x="1824.5" y="-244" font-family="Arial" font-size="10.00" fill="#526961">3. Ergebnis / Entscheidung</text>
+<text text-anchor="middle" x="1824.5" y="-233" font-family="Arial" font-size="10.00" fill="#526961">zurückgeben</text>
+</g>
+<!-- 13 -->
+<g id="node8" class="node">
+<title>13</title>
+<g id="a_node8"><a xlink:href="#element=13" xlink:title="Quellcode und Dateien auf Mac, Linux oder Server. Zugriff nach Freigabe.">
+<path fill="#e0eee8" stroke="#c8d6d2" stroke-width="1.2" d="M2715,-353C2715,-353 2448,-353 2448,-353 2442,-353 2436,-347 2436,-341 2436,-341 2436,-283 2436,-283 2436,-277 2442,-271 2448,-271 2448,-271 2715,-271 2715,-271 2721,-271 2727,-277 2727,-283 2727,-283 2727,-341 2727,-341 2727,-347 2721,-353 2715,-353"/>
+<text text-anchor="middle" x="2581.5" y="-329.6" font-family="Arial" font-size="13.00">Lokaler Projektordner</text>
+<text text-anchor="middle" x="2581.5" y="-315.6" font-family="Arial" font-size="13.00">[softwareSystem]</text>
+<text text-anchor="middle" x="2581.5" y="-301.6" font-family="Arial" font-size="13.00">Quellcode und Dateien auf Mac, Linux oder</text>
+<text text-anchor="middle" x="2581.5" y="-287.6" font-family="Arial" font-size="13.00">Server. Zugriff nach Freigabe.</text>
+</a>
+</g>
+</g>
+<!-- 8&#45;&gt;13 -->
+<g id="edge10" class="edge">
+<title>8&#45;&gt;13</title>
+<path fill="none" stroke="#9aaea7" d="M2243.24,-312C2302.12,-312 2369.57,-312 2428.61,-312"/>
+<polygon fill="#9aaea7" stroke="#9aaea7" points="2428.76,-314.45 2435.76,-312 2428.76,-309.55 2428.76,-314.45"/>
+<text text-anchor="middle" x="2339.5" y="-315" font-family="Arial" font-size="10.00" fill="#526961">Erlaubte Dateioperationen</text>
+</g>
+</g>
+</svg>
