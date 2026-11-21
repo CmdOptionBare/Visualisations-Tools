@@ -4,37 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kognitiv-Interaktionale Linguistik: Datengetriebenes D3.js-Strukturmodell</title>
-    
+
     <!-- Tailwind CSS fuer responsives Widescreen-Styling -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+    <script src="./tailwind-config.js"></script>
+
     <!-- D3.js v7 fuer CSV-Parsing, Force-Simulation, Zoom und SVG-Rendering -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    
-    <!-- Google Fonts: Inter fuer Lesbarkeit und JetBrains Mono fuer linguistische Annotationen -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
-                    },
-                    colors: {
-                        slate: {
-                            850: '#151e32',
-                            950: '#090d16'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
 
-    <!-- Projektspezifisches CSS wird aus stylesheets geladen. -->
+    <!-- Google Fonts: Inter fuer Lesbarkeit und JetBrains Mono fuer linguistische Annotationen -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Projektspezifisches Stylesheet -->
+    <link rel="stylesheet" href="./styles.css">
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col overflow-x-hidden selection:bg-sky-500/30 selection:text-sky-200">
 
@@ -43,7 +27,7 @@
          ===================================================================== -->
     <div class="w-full bg-slate-950 border-b border-slate-800/90 text-xs">
         <div class="w-full max-w-[1920px] mx-auto px-4 lg:px-8 py-2 flex flex-wrap items-center justify-between gap-3">
-            
+
             <!-- Live-Status der Datenquelle -->
             <div class="flex items-center gap-3">
                 <div id="data-status-badge" class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-700 text-slate-300">
@@ -57,18 +41,21 @@
 
             <!-- Aktions-Buttons: Google Sheet oeffnen, Neu laden, Fallback-Drawer -->
             <div class="flex items-center gap-2">
-                <a href="https://docs.google.com/spreadsheets/d/1nuasNX1LQj-OgxAAJsrIOklqbwuWST_I7xR3LEKm_js/edit?usp=sharing" 
-                   target="_blank" 
+                <a href="https://docs.google.com/spreadsheets/d/1nuasNX1LQj-OgxAAJsrIOklqbwuWST_I7xR3LEKm_js/edit?usp=sharing"
+                   target="_blank"
                    rel="noopener noreferrer"
                    class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-slate-300 hover:text-white transition-colors">
                     Google Tabelle oeffnen
                 </a>
-                <button onclick="loadAllDataFromGoogleSheets()" 
+                <button id="btn-reload-top"
+                        type="button"
                         class="px-2.5 py-1 rounded-lg bg-sky-500/15 hover:bg-sky-500/25 border border-sky-500/40 text-sky-300 font-medium transition-colors">
                     Neu laden
                 </button>
-                <button onclick="toggleDataDrawer()" 
-                        id="btn-toggle-drawer"
+                <button id="btn-toggle-drawer"
+                        type="button"
+                        aria-expanded="false"
+                        aria-controls="csv-drawer"
                         class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-medium transition-colors">
                     Datenquelle &amp; CSV-Import
                 </button>
@@ -78,7 +65,7 @@
         <!-- Aufklappbarer Drawer: Fallback bei fehlender Freigabe & manueller CSV-Upload -->
         <div id="csv-drawer" class="hidden border-t border-slate-800 bg-slate-900/95 backdrop-blur-md">
             <div class="w-full max-w-[1920px] mx-auto px-4 lg:px-8 py-5 space-y-4">
-                
+
                 <!-- Hinweisbanner (wird bei Auth/CORS-Fehler hervorgehoben) -->
                 <div id="drawer-alert" class="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
@@ -87,27 +74,27 @@
                             Bitte Tabelle auf <strong>„Jeder mit dem Link darf ansehen“</strong> stellen oder die drei CSV-Dateien unten hochladen/einfuegen, falls der Direktabruf ueber Google gviz blockiert wird.
                         </p>
                     </div>
-                    <button onclick="loadAllDataFromGoogleSheets()" class="shrink-0 px-3 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-200 text-xs font-medium">
+                    <button id="btn-reload-drawer" type="button" class="shrink-0 px-3 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-200 text-xs font-medium">
                         Erneut live abrufen
                     </button>
                 </div>
 
                 <!-- Drei getrennte Import-Spalten fuer nodes, edges und sentence_tokens -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                    
+
                     <!-- Spalte 1: nodes -->
                     <div class="bg-slate-950/90 p-3.5 rounded-xl border border-slate-800 space-y-2">
                         <div class="flex items-center justify-between">
                             <span class="font-mono font-semibold text-xs text-sky-400">1. Tabellenblatt: nodes</span>
                             <label class="cursor-pointer px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[11px] text-slate-300 border border-slate-700">
                                 CSV-Datei waehlen
-                                <input type="file" accept=".csv,text/csv" class="hidden" onchange="handleCsvFileUpload(event, 'nodes')">
+                                <input id="file-input-nodes" type="file" accept=".csv,text/csv" class="hidden">
                             </label>
                         </div>
                         <p class="text-[10px] font-mono text-slate-500 truncate" title="id, model, label, category, theorists, core_concept, sentence_analysis, classical_contrast, tooltip_short">
                             Spalten: id, model, label, category, theorists, ...
                         </p>
-                        <textarea id="csv-input-nodes" rows="4" placeholder="Hier CSV-Inhalt fuer 'nodes' einfuegen oder oben Datei laden..." 
+                        <textarea id="csv-input-nodes" rows="4" placeholder="Hier CSV-Inhalt fuer 'nodes' einfuegen oder oben Datei laden..."
                                   class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 font-mono text-[11px] text-slate-300 focus:outline-none focus:border-sky-500"></textarea>
                     </div>
 
@@ -117,13 +104,13 @@
                             <span class="font-mono font-semibold text-xs text-emerald-400">2. Tabellenblatt: edges</span>
                             <label class="cursor-pointer px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[11px] text-slate-300 border border-slate-700">
                                 CSV-Datei waehlen
-                                <input type="file" accept=".csv,text/csv" class="hidden" onchange="handleCsvFileUpload(event, 'edges')">
+                                <input id="file-input-edges" type="file" accept=".csv,text/csv" class="hidden">
                             </label>
                         </div>
                         <p class="text-[10px] font-mono text-slate-500 truncate" title="id, model, source, target, relation_type, label, strength, description">
                             Spalten: id, model, source, target, relation_type, ...
                         </p>
-                        <textarea id="csv-input-edges" rows="4" placeholder="Hier CSV-Inhalt fuer 'edges' einfuegen oder oben Datei laden..." 
+                        <textarea id="csv-input-edges" rows="4" placeholder="Hier CSV-Inhalt fuer 'edges' einfuegen oder oben Datei laden..."
                                   class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 font-mono text-[11px] text-slate-300 focus:outline-none focus:border-emerald-500"></textarea>
                     </div>
 
@@ -133,23 +120,23 @@
                             <span class="font-mono font-semibold text-xs text-purple-400">3. Tabellenblatt: sentence_tokens</span>
                             <label class="cursor-pointer px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[11px] text-slate-300 border border-slate-700">
                                 CSV-Datei waehlen
-                                <input type="file" accept=".csv,text/csv" class="hidden" onchange="handleCsvFileUpload(event, 'tokens')">
+                                <input id="file-input-tokens" type="file" accept=".csv,text/csv" class="hidden">
                             </label>
                         </div>
                         <p class="text-[10px] font-mono text-slate-500 truncate" title="token_id, token_text, word_role, linked_node_ids, embodied_layer, construction_layer, interactional_layer, classic_morris_split">
                             Spalten: token_id, token_text, word_role, linked_node_ids, ...
                         </p>
-                        <textarea id="csv-input-tokens" rows="4" placeholder="Hier CSV-Inhalt fuer 'sentence_tokens' einfuegen oder oben Datei laden..." 
+                        <textarea id="csv-input-tokens" rows="4" placeholder="Hier CSV-Inhalt fuer 'sentence_tokens' einfuegen oder oben Datei laden..."
                                   class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 font-mono text-[11px] text-slate-300 focus:outline-none focus:border-purple-500"></textarea>
                     </div>
                 </div>
 
                 <!-- Button zum Uebernehmen der lokalen CSV-Daten -->
                 <div class="flex items-center justify-end gap-3">
-                    <button onclick="toggleDataDrawer()" class="px-3 py-1.5 rounded-lg text-xs text-slate-400 hover:text-white">
+                    <button id="btn-close-drawer" type="button" class="px-3 py-1.5 rounded-lg text-xs text-slate-400 hover:text-white">
                         Schliessen
                     </button>
-                    <button onclick="applyManualCsvData()" class="px-4 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-xs font-semibold transition-colors">
+                    <button id="btn-apply-csv" type="button" class="px-4 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-xs font-semibold transition-colors">
                         Eingefuegte CSV-Daten parsen &amp; visualisieren
                     </button>
                 </div>
@@ -162,7 +149,7 @@
          ===================================================================== -->
     <header class="w-full border-b border-slate-800/80 bg-slate-900/75 backdrop-blur-md sticky top-0 z-20">
         <div class="w-full max-w-[1920px] mx-auto px-4 lg:px-8 py-3 flex flex-col xl:flex-row items-start xl:items-center justify-between gap-3">
-            
+
             <!-- Anwendungstitel -->
             <div>
                 <h1 class="text-base sm:text-lg font-bold tracking-tight text-white">
@@ -178,13 +165,14 @@
                 <span class="text-[11px] uppercase tracking-wider font-semibold text-slate-500 mr-1 hidden sm:inline">
                     Beispielsatz:
                 </span>
-                
+
                 <!-- Container wird durch renderSentenceBar() befuellt -->
                 <div id="sentence-container" class="flex flex-wrap items-center gap-1.5">
                     <span class="text-xs text-slate-500 italic">Warte auf sentence_tokens CSV...</span>
                 </div>
 
-                <button onclick="clearSelection()" 
+                <button id="btn-clear-selection"
+                        type="button"
                         class="ml-2 text-xs text-slate-400 hover:text-white underline decoration-slate-600 underline-offset-4 px-2 py-1">
                     Auswahl aufheben
                 </button>
@@ -199,15 +187,15 @@
 
         <!-- Linker/Mittlerer Bereich: Grosses D3-Force-Graph-Canvas (8 von 12 Spalten auf Desktop) -->
         <section id="canvas-wrapper" class="lg:col-span-8 relative min-h-[540px] lg:min-h-[calc(100vh-118px)] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-slate-950 flex flex-col overflow-hidden">
-            
+
             <!-- Oben links im Canvas: Paradigmen-Umschalter (Modern vs. Classic) -->
             <div class="absolute top-4 left-4 z-10 flex flex-col gap-2">
                 <div class="bg-slate-950/90 backdrop-blur-md p-1 rounded-xl border border-slate-800 flex items-center text-xs font-medium shadow-xl">
-                    <button id="btn-mode-modern" onclick="setModelMode('modern')" 
+                    <button id="btn-mode-modern" type="button"
                             class="px-3 py-1.5 rounded-lg bg-sky-500/20 text-sky-300 border border-sky-500/40 transition-all">
                         Modernes Netzwerk (model: modern)
                     </button>
-                    <button id="btn-mode-classic" onclick="setModelMode('classic')" 
+                    <button id="btn-mode-classic" type="button"
                             class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 border border-transparent transition-all">
                         Morris-Pipeline (model: classic)
                     </button>
@@ -226,7 +214,8 @@
 
             <!-- Oben rechts im Canvas: Zoom-Reset-Steuerung -->
             <div class="absolute top-4 right-4 z-10 flex items-center gap-1.5">
-                <button onclick="resetCanvasZoom()" 
+                <button id="btn-reset-zoom"
+                        type="button"
                         class="px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 backdrop-blur-md text-xs text-slate-300 hover:text-white shadow-lg transition-colors">
                     Ansicht zentrieren
                 </button>
@@ -256,7 +245,7 @@
 
         <!-- Rechter Bereich: Dediziertes Kontextfenster (4 von 12 Spalten auf Desktop) -->
         <aside id="context-panel" class="lg:col-span-4 border-t lg:border-t-0 lg:border-l border-slate-800/80 bg-slate-900/65 backdrop-blur-sm p-5 lg:p-7 overflow-y-auto lg:max-h-[calc(100vh-118px)] flex flex-col justify-between">
-            
+
             <!-- Hier werden die Spaltenwerte des gewaehlten Nodes, der Edge oder des Tokens gerendert -->
             <div id="context-content" class="space-y-5">
                 <!-- Initialer Platzhalter bis Daten geladen sind -->
@@ -271,56 +260,6 @@
 
     </main>
 
-    <script>
-    (async () => {
-      const id = '1nuasNX1LQj-OgxAAJsrIOklqbwuWST_I7xR3LEKm_js';
-      let phase = 'Vorbereitung';
-      const update = msg => { const el=document.getElementById('overlay-title'); if(el) el.textContent=msg; };
-      const limit = (p, name) => Promise.race([p, new Promise((_,reject)=>setTimeout(()=>reject(new Error('Zeitlimit: '+name)),8000))]);
-      const parse = text => {
-        const rows=[]; let row=[], field='', quoted=false;
-        for(let i=0;i<text.length;i++) { const ch=text[i];
-          if(quoted) { if(ch==='"' && text[i+1]==='"') { field+='"';i++; } else if(ch==='"') quoted=false; else field+=ch; }
-          else if(ch==='"' && field==='') quoted=true;
-          else if(ch===',') {row.push(field);field='';}
-          else if(ch==='\n' || ch==='\r') {if(ch==='\r' && text[i+1]==='\n')i++;row.push(field);rows.push(row);row=[];field='';}
-          else field+=ch;
-        }
-        if(quoted) throw new Error('CSV enthält ein nicht abgeschlossenes Anführungszeichen');
-        if(field || row.length){row.push(field);rows.push(row);}
-        const headers=rows.shift() || [];return rows.map(values=>Object.fromEntries(headers.map((h,i)=>[h,values[i] || ''])));
-      };
-      try {
-        phase='Tabellenblatt meta_artifacts abrufen'; update(phase);
-        const url=`https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&sheet=meta_artifacts`;
-        const response=await limit(fetch(url,{cache:'no-store'}),phase);
-        if(!response.ok) throw new Error('HTTP '+response.status);
-        const meta=parse(await limit(response.text(),phase)).find(r=>r.artifact_id==='meta_sheet_reader_v1');
-        if(!meta || !meta.code_body) throw new Error('Artefakt meta_sheet_reader_v1 fehlt');
-        phase='D3-Bibliothek prüfen'; update(phase);
-        if (!window.d3) throw new Error('Google-Tabelle ist erreichbar, aber D3 von https://d3js.org/d3.v7.min.js wurde nicht geladen');
-        phase='Tabellenzugriff ausführen'; update(phase);
-        let readSheet;
-        try { readSheet=new Function(meta.code_body)(); } catch(e) { throw new Error('JavaScript aus Tabellenzelle kann nicht ausgeführt werden: '+e.message); }
-        phase='Stylesheets und Code-Artefakte abrufen'; update(phase);
-        const [styles, artifacts]=await limit(Promise.all([readSheet('stylesheets',id),readSheet('code_artifacts',id)]),phase);
-        const style=styles.find(r=>r.style_id==='css_original_runtime_v1');
-        if(!style || !style.css_rules) throw new Error('Stylesheet css_original_runtime_v1 fehlt');
-        const styleEl=document.createElement('style');styleEl.textContent=style.css_rules;document.head.appendChild(styleEl);
-        const parts=artifacts.filter(r=>/^runtime_app_part_\d+$/.test(r.artifact_id)).sort((a,b)=>Number(a.artifact_id.split('_').pop())-Number(b.artifact_id.split('_').pop()));
-        if(parts.length!==3 || parts.some((p,i)=>p.artifact_id!==`runtime_app_part_${i+1}` || !p.code_body)) throw new Error('Anwendungsteile fehlen oder sind doppelt');
-        phase='Anwendung starten'; update(phase);
-        const app=parts.map(p=>p.code_body).join('');
-        const script=document.createElement('script');script.textContent=app;document.body.appendChild(script);
-      } catch(error) {
-        console.error('Startphase:',phase,error);
-        const box=document.createElement('div');box.style.cssText='position:fixed;inset:0;z-index:99999;background:#0b0f17;color:#fff;padding:2rem;font:16px sans-serif';
-        const title=document.createElement('h2');title.textContent='Live-Start fehlgeschlagen';
-        const detail=document.createElement('p');detail.textContent='Schritt: '+phase+' — '+error.message;
-        const hint=document.createElement('p');hint.textContent='Alle Daten und Programmteile werden ausschließlich live aus Google Sheets geladen.';
-        box.append(title,detail,hint);document.body.appendChild(box);
-      }
-    })();
-    </script>
+    <script src="./app.js" defer></script>
 </body>
 </html>
