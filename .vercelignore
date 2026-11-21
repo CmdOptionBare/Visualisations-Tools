@@ -1,0 +1,14 @@
+# Local-only Python + Structurizr workbench (not a static Vercel route)
+c4-studio-diagramm/
+
+# Non-web repository files
+README.md
+LICENSE
+
+# Local scripts and caches
+*.py
+*.sh
+*.command
+__pycache__/
+*.pyc
+.DS_Store
