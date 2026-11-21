@@ -54,6 +54,8 @@
         currentModel: 'modern',
         selection: null, // { type: 'node' | 'edge' | 'token', id: string }
         sourceMode: 'init', // 'init' | 'live' | 'manual' | 'error'
+        loadGeneration: 0,
+        activeFetchController: null,
         simulation: null,
         svg: null,
         zoomBehavior: null,
@@ -132,13 +134,20 @@
         return parseCsvFallback(trimmed);
     }
 
-    async function fetchSheetCsv(sheetName) {
-        const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+    function cancelPendingLiveLoad() {
+        state.loadGeneration += 1;
+        if (state.activeFetchController) {
+            state.activeFetchController.abort();
+            state.activeFetchController = null;
+        }
+        return state.loadGeneration;
+    }
+
+    async function fetchSheetCsv(sheetName, signal) {
         try {
             const response = await fetch(buildSheetCsvUrl(sheetName), {
                 cache: 'no-store',
-                signal: controller.signal,
+                signal,
             });
             if (!response.ok) {
                 throw new Error(`Tabellenblatt "${sheetName}": HTTP ${response.status}`);
@@ -153,8 +162,6 @@
                 throw new Error(`Zeitlimit (${FETCH_TIMEOUT_MS / 1000}s) beim Abruf von "${sheetName}" überschritten.`);
             }
             throw err;
-        } finally {
-            clearTimeout(timer);
         }
     }
 
@@ -1208,6 +1215,10 @@
             throw new Error('Keine gültigen Knoten (Spalte "id") in den geladenen CSV-Daten gefunden.');
         }
 
+        if (sourceKind === 'manual') {
+            cancelPendingLiveLoad();
+        }
+
         state.allNodes = mapped.nodes;
         state.allEdges = mapped.edges;
         state.allTokens = mapped.tokens;
@@ -1227,6 +1238,11 @@
     }
 
     async function loadAllDataFromGoogleSheets() {
+        const generation = cancelPendingLiveLoad();
+        const controller = new AbortController();
+        state.activeFetchController = controller;
+        const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+
         setStatus('loading', 'Lade Live-Daten aus Google Sheets...');
         showOverlay(
             'Lade Daten aus Google Sheets...',
@@ -1239,10 +1255,12 @@
             }
 
             const [nodesCsv, edgesCsv, tokensCsv] = await Promise.all([
-                fetchSheetCsv('nodes'),
-                fetchSheetCsv('edges'),
-                fetchSheetCsv('sentence_tokens'),
+                fetchSheetCsv('nodes', controller.signal),
+                fetchSheetCsv('edges', controller.signal),
+                fetchSheetCsv('sentence_tokens', controller.signal),
             ]);
+
+            if (generation !== state.loadGeneration) return;
 
             const nodesInput = document.getElementById('csv-input-nodes');
             const edgesInput = document.getElementById('csv-input-edges');
@@ -1263,6 +1281,7 @@
                 'Live synchronisiert (Google Sheets)'
             );
         } catch (error) {
+            if (generation !== state.loadGeneration) return;
             console.error('Google Sheets Abruf fehlgeschlagen:', error);
             state.sourceMode = 'error';
             setStatus('error', `Abruf fehlgeschlagen: ${error.message}`);
@@ -1274,6 +1293,11 @@
                     { label: 'CSV-Import öffnen', primary: false, onClick: () => openDataDrawer() },
                 ]
             );
+        } finally {
+            clearTimeout(timeoutId);
+            if (state.activeFetchController === controller) {
+                state.activeFetchController = null;
+            }
         }
     }
 
