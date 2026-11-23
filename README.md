@@ -1,20 +1,50 @@
 # Visualisations-Tools
 
-Static multi-visualization site for **Vercel**. Each visualization is a folder with an `index.html`, served at `/<slug>/`.
+Static multi-visualization site for **Vercel**. Each visualization is a folder with an `index.html`, served at `/<slug>/`. The public start page is the German catalog in `data/catalog.json`.
+
+## Werkzeug auf die Startseite setzen
+
+Die Startseite liest nur `data/catalog.json`. Ein weiteres Werkzeug braucht genau zwei Dinge: ein Vorschaubild und einen Eintrag. `index.html` bleibt unverändert. Die Seite zeigt immer höchstens zehn Treffer; ab dem elften erscheint die Blätterleiste von selbst. Filter entstehen aus den Werten, die in der Datei stehen.
+
+1. Bild ablegen, Querformat 16:10: `assets/previews/mein-werkzeug.webp`
+2. In `data/catalog.json` im Array `tools` ein Objekt ergänzen:
+
+```json
+{
+  "id": "mein-werkzeug",
+  "title": "Anzeigename",
+  "summary": "Ein Satz, was man damit sieht.",
+  "href": "/mein-werkzeug/",
+  "external": false,
+  "preview": "assets/previews/mein-werkzeug.webp",
+  "topic": "Thema",
+  "format": "Darstellung",
+  "dataSource": "Datenquelle",
+  "location": "Im Portal",
+  "tags": ["Stichwort"]
+}
+```
+
+Eine Seite außerhalb dieses Portals bekommt `"external": true`, `"location": "Externe App"` und eine volle `https://`-Adresse in `href`. Die Karte öffnet sie dann in einem neuen Fenster.
+
+`examples/blank/` und `examples/hello/` bleiben Kopiervorlagen im Repo. Sie stehen nicht im Katalog und damit nicht auf der Startseite.
 
 ## Layout
 
 ```text
 .
-├── index.html                 # Hub listing available viz pages
+├── index.html                 # German catalog hub
+├── data/catalog.json          # Tools shown on the start page
+├── assets/previews/           # 16:10 card images
 ├── vercel.json                # trailingSlash so /slug → /slug/
 ├── shared/                    # Reusable CSS/JS (relative: ../shared/…)
 │   ├── hub.css
+│   ├── hub.js                 # Search, filters, 10-per-page catalog
 │   └── load-json.js
-├── examples/blank/            # Starter template: local JSON + loadJson
+├── examples/blank/            # Starter template, not listed on the hub
 │   ├── index.html
 │   └── data/sample.json
-├── examples/hello/            # Demo: fetches local JSON
+├── examples/hello/            # JSON demo, not listed on the hub
 │   ├── index.html
 │   └── data/sample.json
 ├── first-principles-graph/    # Existing viz (moved from root HTML)
@@ -49,7 +79,7 @@ Vercel serves each folder’s `index.html` automatically (Framework Preset: **Ot
    ```
 
 4. Optional shared helpers/styles: `../shared/hub.css`, `../shared/load-json.js` (one more `../` if nested under `examples/`).
-5. Link the page from the root `index.html` hub list.
+5. Add the page to `data/catalog.json` and put a preview in `assets/previews/`. See „Werkzeug auf die Startseite setzen“.
 
 ### Path rules
 

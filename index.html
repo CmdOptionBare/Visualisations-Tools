@@ -1,47 +1,42 @@
 <!doctype html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Visualisations-Tools</title>
+  <title>Visualisierungen</title>
+  <link rel="icon" href="./favicon.ico">
   <link rel="stylesheet" href="./shared/hub.css">
 </head>
 <body>
-  <div class="wrap">
-    <p class="brand">Visualisations-Tools</p>
-    <h1>Static visualization hub</h1>
-    <p class="lead">Each entry is a folder with its own <code>index.html</code>, served at <code>/&lt;slug&gt;/</code> on Vercel. Local data lives beside the page (same-origin).</p>
-    <ul class="viz-list">
-      <li>
-        <a href="./examples/blank/">
-          <strong>Blank starter</strong>
-          <span>Empty-ish template: local JSON via <code>loadJson</code>, ready to copy.</span>
-          <code>/examples/blank/</code>
-        </a>
-      </li>
-      <li>
-        <a href="./examples/hello/">
-          <strong>Hello (JSON demo)</strong>
-          <span>Tiny example that loads <code>./data/sample.json</code>.</span>
-          <code>/examples/hello/</code>
-        </a>
-      </li>
-      <li>
-        <a href="./first-principles-graph/">
-          <strong>First Principles · Erkenntnisbaum</strong>
-          <span>Interactive multi-root knowledge DAG (self-contained).</span>
-          <code>/first-principles-graph/</code>
-        </a>
-      </li>
-      <li>
-        <a href="./kognitiv-graph/">
-          <strong>Kognitiv Graph · Live-Diagnose</strong>
-          <span>Cognitive graph visualization (D3 via CDN).</span>
-          <code>/kognitiv-graph/</code>
-        </a>
-      </li>
-    </ul>
-    <p class="note"><strong>c4-studio-diagramm/</strong> stays in the repo as a local Python + Structurizr workbench. It needs its own server (<code>bash start.sh</code>) and is not a static Vercel subpage.</p>
+  <div class="portal">
+    <header class="mast">
+      <p class="brand">Visualisations-Tools</p>
+      <h1>Visualisierungen</h1>
+      <p class="lead">Graphen, Sprache, 3D-Modelle und Architektur. Die Suche und die Filter gelten für den ganzen Katalog, jede Seite zeigt höchstens zehn Treffer.</p>
+    </header>
+
+    <section class="controls" aria-label="Suche und Filter">
+      <label class="search" for="search">
+        <span class="search-label">Suche</span>
+        <input id="search" type="search" placeholder="Name, Beschreibung oder Merkmal" autocomplete="off">
+      </label>
+      <div id="filters" class="filters"></div>
+      <div class="control-row">
+        <p id="count" class="count" aria-live="polite">Katalog wird geladen …</p>
+        <button id="reset" type="button">Filter zurücksetzen</button>
+      </div>
+    </section>
+
+    <p id="status" class="status" role="status" hidden></p>
+    <p id="empty" class="empty" hidden>Keine Werkzeuge für diese Auswahl.</p>
+    <div id="grid" class="grid"></div>
+
+    <nav id="pager" class="pager" hidden aria-label="Seiten">
+      <button id="prev" type="button">Zurück</button>
+      <p id="page-label" class="page-label"></p>
+      <button id="next" type="button">Weiter</button>
+    </nav>
   </div>
+  <script type="module" src="./shared/hub.js"></script>
 </body>
 </html>
