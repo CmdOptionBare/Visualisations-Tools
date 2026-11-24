@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "sketchfab-part-lab",
+  "title": "Sketchfab Part Lab",
+  "summary": "Öffentliche 3D-Modelle von Sketchfab, in denen sich einzelne Bauteile ein- und ausblenden lassen.",
+  "kind": "external",
+  "href": "https://sketchfabshowandhide.vercel.app/",
+  "preview": "preview.webp",
+  "topic": "3D-Objekt",
+  "format": "3D-Modell",
+  "dataSource": "Sketchfab",
+  "location": "Externe App",
+  "tags": ["Modell", "Bauteile", "Viewer"]
+}

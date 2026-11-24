@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "spacerizr",
+  "title": "Spacerizr 2.x",
+  "summary": "C4-Architektur als Skizze oder als drehbare 3D-Szene, geladen aus einer DSL- oder JSON-Datei.",
+  "kind": "external",
+  "href": "https://spacerizr-2-x.vercel.app/",
+  "preview": "preview.webp",
+  "topic": "Architektur",
+  "format": "Architekturdiagramm",
+  "dataSource": "DSL oder JSON",
+  "location": "Externe App",
+  "tags": ["C4", "Structurizr", "Diagramm"]
+}

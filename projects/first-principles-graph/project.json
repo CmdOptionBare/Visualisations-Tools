@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "first-principles-graph",
+  "title": "First Principles · Erkenntnisbaum",
+  "summary": "Ein interaktiver Erkenntnisbaum mit fest eingebauten Beispielaussagen, als Schichten oder als Raum.",
+  "kind": "static",
+  "preview": "preview.webp",
+  "topic": "Erkenntnis",
+  "format": "2D- und 3D-Graph",
+  "dataSource": "Fest im Programm",
+  "location": "Im Portal",
+  "tags": ["Wissen", "DAG", "Graph"],
+  "entry": "index.html"
+}

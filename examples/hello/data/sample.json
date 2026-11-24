@@ -1,9 +1,0 @@
-{
-  "title": "Hello viz",
-  "message": "Loaded from ./data/sample.json (same-origin).",
-  "points": [
-    { "label": "A", "value": 3 },
-    { "label": "B", "value": 7 },
-    { "label": "C", "value": 5 }
-  ]
-}

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "kognitiv-graph",
+  "title": "Kognitiv-Graph",
+  "summary": "Ein Sprach-Netz, das Begriffe und Beziehungen live aus einer Google-Tabelle liest.",
+  "kind": "static",
+  "preview": "preview.webp",
+  "topic": "Sprache",
+  "format": "2D-Netz",
+  "dataSource": "Google Sheet",
+  "location": "Im Portal",
+  "tags": ["Linguistik", "D3", "Tabelle"],
+  "entry": "index.html"
+}
