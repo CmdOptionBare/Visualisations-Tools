@@ -1,35 +1,57 @@
 const PAGE_SIZE = 10;
 
 const FILTERS = [
-  { key: "topic", label: "Thema" },
-  { key: "format", label: "Darstellung" },
-  { key: "dataSource", label: "Datenquelle" },
-  { key: "location", label: "Bereitstellung" },
+  { key: "topic" as const, label: "Thema" },
+  { key: "format" as const, label: "Darstellung" },
+  { key: "dataSource" as const, label: "Datenquelle" },
+  { key: "location" as const, label: "Bereitstellung" },
 ];
 
+type FilterKey = (typeof FILTERS)[number]["key"];
+
+type CatalogTool = {
+  id: string;
+  title: string;
+  summary: string;
+  kind?: string;
+  href: string;
+  external: boolean;
+  preview: string;
+  topic: string;
+  format: string;
+  dataSource: string;
+  location: string;
+  tags: string[];
+};
+
+type Catalog = {
+  schemaVersion?: number;
+  tools: CatalogTool[];
+};
+
 const state = {
-  tools: [],
+  tools: [] as CatalogTool[],
   query: "",
   page: 1,
   selected: {
-    topic: new Set(),
-    format: new Set(),
-    dataSource: new Set(),
-    location: new Set(),
-  },
+    topic: new Set<string>(),
+    format: new Set<string>(),
+    dataSource: new Set<string>(),
+    location: new Set<string>(),
+  } as Record<FilterKey, Set<string>>,
 };
 
-const searchInput = document.getElementById("search");
-const filtersRoot = document.getElementById("filters");
-const countEl = document.getElementById("count");
-const resetButton = document.getElementById("reset");
-const statusEl = document.getElementById("status");
-const emptyEl = document.getElementById("empty");
-const gridEl = document.getElementById("grid");
-const pagerEl = document.getElementById("pager");
-const prevButton = document.getElementById("prev");
-const nextButton = document.getElementById("next");
-const pageLabel = document.getElementById("page-label");
+const searchInput = document.getElementById("search") as HTMLInputElement;
+const filtersRoot = document.getElementById("filters") as HTMLElement;
+const countEl = document.getElementById("count") as HTMLElement;
+const resetButton = document.getElementById("reset") as HTMLButtonElement;
+const statusEl = document.getElementById("status") as HTMLElement;
+const emptyEl = document.getElementById("empty") as HTMLElement;
+const gridEl = document.getElementById("grid") as HTMLElement;
+const pagerEl = document.getElementById("pager") as HTMLElement;
+const prevButton = document.getElementById("prev") as HTMLButtonElement;
+const nextButton = document.getElementById("next") as HTMLButtonElement;
+const pageLabel = document.getElementById("page-label") as HTMLElement;
 
 searchInput.addEventListener("input", () => {
   state.query = searchInput.value;
@@ -46,10 +68,13 @@ resetButton.addEventListener("click", () => {
 });
 
 filtersRoot.addEventListener("click", (event) => {
-  const button = event.target.closest("button[data-key]");
+  const button = (event.target as Element).closest(
+    "button[data-key]",
+  ) as HTMLButtonElement | null;
   if (!button) return;
-  const selected = state.selected[button.dataset.key];
-  const value = button.dataset.value;
+  const key = button.dataset.key as FilterKey;
+  const selected = state.selected[key];
+  const value = button.dataset.value ?? "";
   if (selected.has(value)) selected.delete(value);
   else selected.add(value);
   state.page = 1;
@@ -67,7 +92,7 @@ nextButton.addEventListener("click", () => {
   render();
 });
 
-function haystack(tool) {
+function haystack(tool: CatalogTool): string {
   return [
     tool.title,
     tool.summary,
@@ -82,8 +107,12 @@ function haystack(tool) {
     .toLowerCase();
 }
 
-function matchingTools() {
-  const terms = state.query.trim().toLowerCase().split(/\s+/).filter(Boolean);
+function matchingTools(): CatalogTool[] {
+  const terms = state.query
+    .trim()
+    .toLowerCase()
+    .split(/\s+/)
+    .filter(Boolean);
   return state.tools.filter((tool) => {
     for (const { key } of FILTERS) {
       const chosen = state.selected[key];
@@ -95,8 +124,8 @@ function matchingTools() {
   });
 }
 
-function uniqueValues(key) {
-  const values = new Set();
+function uniqueValues(key: FilterKey): string[] {
+  const values = new Set<string>();
   for (const tool of state.tools) {
     const value = String(tool[key] ?? "").trim();
     if (value) values.add(value);
@@ -104,7 +133,7 @@ function uniqueValues(key) {
   return [...values].sort((a, b) => a.localeCompare(b, "de"));
 }
 
-function buildFilters() {
+function buildFilters(): void {
   filtersRoot.replaceChildren();
   for (const { key, label } of FILTERS) {
     const group = document.createElement("fieldset");
@@ -129,15 +158,19 @@ function buildFilters() {
   }
 }
 
-function syncFilterButtons() {
-  for (const button of filtersRoot.querySelectorAll("button[data-key]")) {
-    const on = state.selected[button.dataset.key].has(button.dataset.value);
+function syncFilterButtons(): void {
+  for (const button of filtersRoot.querySelectorAll<HTMLButtonElement>(
+    "button[data-key]",
+  )) {
+    const on = state.selected[button.dataset.key as FilterKey].has(
+      button.dataset.value ?? "",
+    );
     button.classList.toggle("is-selected", on);
     button.setAttribute("aria-pressed", on ? "true" : "false");
   }
 }
 
-function card(tool) {
+function card(tool: CatalogTool): HTMLElement {
   const article = document.createElement("article");
   article.className = "card";
 
@@ -159,7 +192,8 @@ function card(tool) {
 
   const badge = document.createElement("span");
   badge.className = tool.external ? "badge badge-external" : "badge";
-  badge.textContent = tool.location || (tool.external ? "Externe App" : "Im Portal");
+  badge.textContent =
+    tool.location || (tool.external ? "Externe App" : "Im Portal");
   frame.append(badge);
 
   const body = document.createElement("div");
@@ -183,7 +217,7 @@ function card(tool) {
   return article;
 }
 
-function render() {
+function render(): void {
   const matched = matchingTools();
   const pageCount = Math.max(1, Math.ceil(matched.length / PAGE_SIZE));
   if (state.page > pageCount) state.page = pageCount;
@@ -211,17 +245,16 @@ function render() {
   syncFilterButtons();
 }
 
-function showStatus(message) {
+function showStatus(message: string): void {
   statusEl.hidden = false;
   statusEl.textContent = message;
 }
 
-async function init() {
+async function init(): Promise<void> {
   try {
-    const url = new URL("../data/catalog.json", import.meta.url);
-    const response = await fetch(url, { cache: "no-store" });
+    const response = await fetch("./catalog.json", { cache: "no-store" });
     if (!response.ok) throw new Error(String(response.status));
-    const catalog = await response.json();
+    const catalog = (await response.json()) as Catalog;
     state.tools = Array.isArray(catalog.tools) ? catalog.tools : [];
     statusEl.hidden = true;
     buildFilters();
@@ -232,4 +265,4 @@ async function init() {
   }
 }
 
-init();
+void init();
