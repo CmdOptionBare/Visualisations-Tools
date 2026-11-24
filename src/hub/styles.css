@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 :root {
   color-scheme: dark;
   --bg: #0c1218;
@@ -37,10 +39,19 @@ a {
   color: var(--link);
 }
 
-.wrap {
-  max-width: 720px;
+.portal {
+  max-width: 1180px;
   margin: 0 auto;
-  padding: 2.5rem 1.25rem 4rem;
+  padding: 1.35rem 1.25rem 2rem;
+}
+
+.portal h1 {
+  font-size: clamp(1.55rem, 3vw, 1.9rem);
+  margin-bottom: 0.4rem;
+}
+
+.mast {
+  margin-bottom: 0.9rem;
 }
 
 .brand {
@@ -63,32 +74,6 @@ h1 {
   line-height: 1.55;
   margin: 0;
   max-width: 40rem;
-}
-
-.back {
-  display: inline-block;
-  margin-bottom: 1.25rem;
-  font-size: 0.9rem;
-  text-decoration: none;
-}
-
-.back:hover {
-  text-decoration: underline;
-}
-
-.portal {
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: 1.35rem 1.25rem 2rem;
-}
-
-.portal h1 {
-  font-size: clamp(1.55rem, 3vw, 1.9rem);
-  margin-bottom: 0.4rem;
-}
-
-.mast {
-  margin-bottom: 0.9rem;
 }
 
 .controls {
