@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "c4-studio-diagramm",
+  "title": "C4 Studio Diagramm-Workbench",
+  "summary": "Lokale Python- und Structurizr-Arbeitsumgebung für C4-Architekturdiagramme.",
+  "kind": "local-tool",
+  "topic": "Architektur",
+  "format": "Lokale Workbench",
+  "dataSource": "Structurizr DSL",
+  "location": "Lokal",
+  "tags": ["C4", "Structurizr", "Python"]
+}

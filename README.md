@@ -1,108 +1,109 @@
 # Visualisations-Tools
 
-Static multi-visualization site for **Vercel**. Each visualization is a folder with an `index.html`, served at `/<slug>/`. The public start page is the German catalog in `data/catalog.json`.
+Deutsches Portal für interaktive Visualisierungen und verlinkte externe Apps. Der Build erzeugt aus `projects/*/project.json` eine Startseite (`src/hub/`) sowie `dist/catalog.json` und kopiert statische Projekte nach `dist/projects/<id>/`.
 
-## Werkzeug auf die Startseite setzen
-
-Die Startseite liest nur `data/catalog.json`. Ein weiteres Werkzeug braucht genau zwei Dinge: ein Vorschaubild und einen Eintrag. `index.html` bleibt unverändert. Die Seite zeigt immer höchstens zehn Treffer; ab dem elften erscheint die Blätterleiste von selbst. Filter entstehen aus den Werten, die in der Datei stehen.
-
-1. Bild ablegen, Querformat 16:10: `assets/previews/mein-werkzeug.webp`
-2. In `data/catalog.json` im Array `tools` ein Objekt ergänzen:
-
-```json
-{
-  "id": "mein-werkzeug",
-  "title": "Anzeigename",
-  "summary": "Ein Satz, was man damit sieht.",
-  "href": "/mein-werkzeug/",
-  "external": false,
-  "preview": "assets/previews/mein-werkzeug.webp",
-  "topic": "Thema",
-  "format": "Darstellung",
-  "dataSource": "Datenquelle",
-  "location": "Im Portal",
-  "tags": ["Stichwort"]
-}
-```
-
-Eine Seite außerhalb dieses Portals bekommt `"external": true`, `"location": "Externe App"` und eine volle `https://`-Adresse in `href`. Die Karte öffnet sie dann in einem neuen Fenster.
-
-`examples/blank/` und `examples/hello/` bleiben Kopiervorlagen im Repo. Sie stehen nicht im Katalog und damit nicht auf der Startseite.
-
-## Layout
+## Verzeichnisbaum
 
 ```text
 .
-├── index.html                 # German catalog hub
-├── data/catalog.json          # Tools shown on the start page
-├── assets/previews/           # 16:10 card images
-├── vercel.json                # trailingSlash so /slug → /slug/
-├── shared/                    # Reusable CSS/JS (relative: ../shared/…)
-│   ├── hub.css
-│   ├── hub.js                 # Search, filters, 10-per-page catalog
-│   └── load-json.js
-├── examples/blank/            # Starter template, not listed on the hub
-│   ├── index.html
-│   └── data/sample.json
-├── examples/hello/            # JSON demo, not listed on the hub
-│   ├── index.html
-│   └── data/sample.json
-├── first-principles-graph/    # Existing viz (moved from root HTML)
-│   └── index.html
-├── kognitiv-graph/            # Existing viz (moved from root HTML)
-│   └── index.html
-└── c4-studio-diagramm/        # Local Python workbench (not static Vercel)
+├── src/hub/              # Vite-Hub (TypeScript, Tailwind): index.html, main.ts, styles.css
+├── projects/             # Ein Unterordner pro Werkzeug inkl. project.json
+├── templates/            # Platzhalter für künftige wiederverwendbare Vorlagen (README only)
+├── public/               # Statische Dateien fürs Root (z. B. favicon.ico) → dist/
+├── scripts/build.mjs     # Typecheck, Vite-Build, Katalog, Kopie statischer Projekte
+├── dist/                 # Build-Ausgabe (generiert, nicht versionieren)
+├── package.json
+├── pnpm-lock.yaml
+├── vite.config.ts
+└── vercel.json           # trailingSlash, Redirects, CSP-Header
 ```
 
-## URL mapping
+`dist/` entsteht nur durch `pnpm run build` und gehört nicht ins Git (siehe `.gitignore`).
 
-| Folder | URL on Vercel |
-|--------|----------------|
-| `index.html` | `https://<project>.vercel.app/` |
-| `examples/blank/` | `https://<project>.vercel.app/examples/blank/` |
-| `examples/hello/` | `https://<project>.vercel.app/examples/hello/` |
-| `first-principles-graph/` | `https://<project>.vercel.app/first-principles-graph/` |
-| `kognitiv-graph/` | `https://<project>.vercel.app/kognitiv-graph/` |
+Unter `templates/` liegen derzeit **keine** generischen `blank`- oder `hello`-Vorlagen — nur eine Erklärung für spätere Templates (`templates/README.md`).
 
-Vercel serves each folder’s `index.html` automatically (Framework Preset: **Other** / static). `vercel.json` sets `trailingSlash: true` so relative asset paths stay correct.
+`projects/c4-studio-diagramm/` ist eine **lokale** Python-/Structurizr-Arbeitsumgebung. Sie wird vom Build **nicht** nach `dist/` kopiert (`kind: "local-tool"`), läuft aber mit `project.json` im Repo, damit der Katalog-Validator sie kennt.
 
-## Add a new visualization
+## `project.json`-Schema
 
-1. Create a folder at the repo root (or under `examples/`), e.g. `my-viz/`.
-2. Add `my-viz/index.html`.
-3. Optional local data: `my-viz/data/*.json` and fetch with a **relative** URL:
+Jedes Werkzeug lebt in `projects/<id>/project.json`. Pflichtfelder (Auszug):
+
+| Feld | Bedeutung |
+|------|-----------|
+| `schemaVersion` | Muss `1` sein |
+| `id` | Kleinbuchstaben, Bindestriche; **muss** dem Ordnernamen entsprechen |
+| `title`, `summary` | Anzeige im Hub |
+| `kind` | `static`, `external` oder `local-tool` |
+| `topic`, `format`, `dataSource`, `location` | Filter und Metadaten |
+| `tags` | Nicht-leeres String-Array |
+
+Zusätzlich je nach `kind`:
+
+- **`static`**: `entry` (relativer Pfad zur HTML-Datei im Projektordner), `preview` (relatives Vorschaubild, z. B. `preview.webp`)
+- **`external`**: `href` (`https://…`), `preview`
+- **`local-tool`**: kein Deploy; `preview` optional
+
+Der Build lehnt unbekannte Felder wie `build`, `buildCommand` oder `command` in `project.json` ab.
+
+## Die drei `kind`-Werte
+
+| `kind` | Verhalten |
+|--------|-----------|
+| `static` | HTML/Assets werden nach `dist/projects/<id>/` kopiert; Hub-Link zeigt auf `/projects/<id>/` (bzw. auf `entry`, wenn nicht `index.html`) |
+| `external` | Nur Vorschaubild ins `dist/`; Karte öffnet die `href`-URL in einem neuen Tab |
+| `local-tool` | Erscheint nicht unter `dist/projects/`; dokumentiert lokale Tools im Repo |
+
+## Neues statisches HTML-/JSON-Werkzeug
+
+1. Ordner anlegen: `projects/mein-werkzeug/`
+2. `projects/mein-werkzeug/project.json` mit `kind: "static"`, passender `id`, Pflichtfeldern, `entry` und `preview`
+3. `projects/mein-werkzeug/index.html` (und ggf. JS/CSS) anlegen
+4. Vorschaubild `projects/mein-werkzeug/preview.webp` (Querformat 16:10 empfohlen)
+5. Lokale Daten per **relativer** Same-Origin-URL laden (wichtig für Vercel mit `trailingSlash`):
 
    ```js
-   const data = await fetch("./data/foo.json").then((r) => r.json());
-   // or: import { loadJson } from "../shared/load-json.js";
-   //     const data = await loadJson("./data/foo.json");
+   const data = await fetch("./data/beispiel.json").then((r) => r.json());
    ```
 
-4. Optional shared helpers/styles: `../shared/hub.css`, `../shared/load-json.js` (one more `../` if nested under `examples/`).
-5. Add the page to `data/catalog.json` and put a preview in `assets/previews/`. See „Werkzeug auf die Startseite setzen“.
+6. `pnpm run build` — Eintrag landet automatisch in `dist/catalog.json` und die Dateien unter `dist/projects/mein-werkzeug/`.
 
-### Path rules
+## Externe App verlinken
 
-- Same-folder data/scripts: `./data/foo.json`, `./chart.js`
-- Shared assets from a root-level viz: `../shared/...`
-- Shared assets from `examples/<slug>/`: `../../shared/...`
-- Prefer relative URLs over absolute `/…` so pages also work when opened from disk or preview paths.
+1. Ordner `projects/mein-link/` mit `project.json`:
+   - `"kind": "external"`
+   - `"href": "https://meine-app.vercel.app/"`
+   - `"preview": "preview.webp"` (Bild im selben Ordner)
+   - übrige Pflicht-Metadaten wie oben
+2. `preview.webp` ablegen
+3. Build — Hub zeigt die Karte; Klick öffnet die externe `href`.
 
-## Deploy on Vercel
+## Lokale Entwicklung und Build
 
-1. Import this GitHub repo in [Vercel](https://vercel.com/new).
-2. Framework Preset: **Other** (static). Build command empty; output directory: `.` (repo root).
-3. Deploy. Open `/` for the hub, or any `/<slug>/` above.
-
-Local preview without Vercel:
+Voraussetzung: [pnpm](https://pnpm.io/).
 
 ```sh
-npx --yes serve .
-# or: python3 -m http.server 8080
+pnpm install --frozen-lockfile
+pnpm run build      # dist/ erzeugen (Hub + catalog.json + statische Projekte)
+pnpm run preview    # Vite preview auf dist/
+pnpm run dev        # Dev-Server für src/hub/ (Katalog/Projekte per Middleware)
 ```
 
-Then open `http://localhost:3000/` (or the port printed / `8080`).
+`pnpm run typecheck` prüft TypeScript ohne Emit.
 
-## c4-studio-diagramm (local only)
+## Deployment auf Vercel
 
-`c4-studio-diagramm/` is a Structurizr DSL workbench with a Python server. It is **not** deployed as a static Vercel route. See `c4-studio-diagramm/README.md` and run `bash start.sh` locally.
+Im Vercel-Dashboard (Framework Preset **Other**):
+
+| Einstellung | Wert |
+|-------------|------|
+| Framework Preset | **Other** |
+| Root Directory | `.` |
+| Install Command | `pnpm install --frozen-lockfile` |
+| Build Command | `pnpm run build` |
+| Output Directory | `dist` |
+
+`vercel.json` setzt `trailingSlash: true`, leitet alte Pfade `/first-principles-graph` und `/kognitiv-graph` permanent auf `/projects/…` um und definiert CSP-Header (streng global, angepasst für die beiden Graph-Projekte).
+
+## C4 Studio (lokal)
+
+`projects/c4-studio-diagramm/` enthält Server, DSL-Projekte und Structurizr-Tools zum lokalen Arbeiten. Siehe `projects/c4-studio-diagramm/README.md` und Startskripte dort — **nicht** Teil der statischen Vercel-Auslieferung.

@@ -1,6 +1,28 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "trailingSlash": true,
+  "redirects": [
+    {
+      "source": "/first-principles-graph",
+      "destination": "/projects/first-principles-graph/",
+      "permanent": true
+    },
+    {
+      "source": "/first-principles-graph/:path+",
+      "destination": "/projects/first-principles-graph/:path+",
+      "permanent": true
+    },
+    {
+      "source": "/kognitiv-graph",
+      "destination": "/projects/kognitiv-graph/",
+      "permanent": true
+    },
+    {
+      "source": "/kognitiv-graph/:path+",
+      "destination": "/projects/kognitiv-graph/:path+",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -32,7 +54,7 @@
       ]
     },
     {
-      "source": "/examples/(.*)",
+      "source": "/projects/first-principles-graph/(.*)",
       "headers": [
         {
           "key": "Content-Security-Policy",
@@ -41,16 +63,7 @@
       ]
     },
     {
-      "source": "/first-principles-graph/(.*)",
-      "headers": [
-        {
-          "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'"
-        }
-      ]
-    },
-    {
-      "source": "/kognitiv-graph/(.*)",
+      "source": "/projects/kognitiv-graph/(.*)",
       "headers": [
         {
           "key": "Content-Security-Policy",
