@@ -8,12 +8,22 @@
       "permanent": true
     },
     {
+      "source": "/first-principles-graph/",
+      "destination": "/projects/first-principles-graph/",
+      "permanent": true
+    },
+    {
       "source": "/first-principles-graph/:path+",
       "destination": "/projects/first-principles-graph/:path+",
       "permanent": true
     },
     {
       "source": "/kognitiv-graph",
+      "destination": "/projects/kognitiv-graph/",
+      "permanent": true
+    },
+    {
+      "source": "/kognitiv-graph/",
       "destination": "/projects/kognitiv-graph/",
       "permanent": true
     },
